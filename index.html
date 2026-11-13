@@ -9,7 +9,7 @@
 <style>
 /* Framed sheet (tasteskill app sheet, seed 979012743). Face: the frame tinted a field green-grey for Greenfield;
    the one hue (teal) sits on the deadline track and the ADU footprint.
-   Grid at 1440: sidebar 228 + sheet 1204 + inset 8 = 1440. Inside the sheet: 24 + list 340 + 24 + detail 792 + 24 = 1204. */
+   Grid at 1440: sidebar 228 + sheet 1204 + inset 8 = 1440. Inside the sheet: 24 + list 304 + 24 + detail 828 + 24 = 1204. Detail: plan sheet 392 + 24 + check table 412 = 828. */
 :root{
   --ground:#f4f7f3; --surface:#ffffff; --raised:#f3f5f2; --active:#e7ebe6;
   --border:#e4e8e3; --rule:#eef1ed; --control:#c9cec8;
@@ -81,7 +81,7 @@ a{color:inherit}
 .stamp{font-size:12px;color:var(--muted);white-space:nowrap}
 
 /* applications: list + detail */
-.split{display:grid;grid-template-columns:340px minmax(0,1fr);gap:var(--gap);align-items:start}
+.split{display:grid;grid-template-columns:304px minmax(0,1fr);gap:var(--gap);align-items:start}
 .list{border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
 .tabs{display:flex;gap:20px;padding:0 16px;border-bottom:1px solid var(--border)}
 .tab{height:42px;border:0;background:none;padding:0;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
@@ -100,7 +100,7 @@ a{color:inherit}
 .row-sub span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .track{flex:none;display:block;height:4px;border-radius:2px;background:var(--active);overflow:hidden}
 .track i{display:block;height:100%;background:var(--accent);border-radius:2px}
-.row .track{width:64px}
+.row .track{width:48px}
 .empty{margin:16px;padding:10px 12px;border:1px dashed var(--control);border-radius:8px;color:var(--muted);font-size:13px}
 
 .back{display:none;margin-bottom:12px}
@@ -120,12 +120,25 @@ a{color:inherit}
 .verdict{margin:18px 0 6px;font-size:14px}
 .verdict b{font-weight:600}
 .d-tabs{display:flex;gap:24px;border-bottom:1px solid var(--border);margin-bottom:20px}
-.d-body{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
-.plot{background:var(--raised);border-radius:var(--r-card);padding:12px 0 10px}
-.plot svg{display:block;margin:0 auto;max-width:100%}
-.plot figcaption{padding:6px 14px 0;font-size:12px;line-height:16px;color:var(--muted)}
+.d-body{display:grid;grid-template-columns:392px minmax(0,1fr);gap:var(--gap);align-items:start}
+.plot{background:var(--raised);border-radius:var(--r-card);padding:16px 16px 12px}
+.plot svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.mk rect{fill:#fff;stroke:var(--accent)}
+.mk text{fill:var(--text)}
+.mk.bad rect{fill:var(--pill-negative-bg);stroke:var(--negative)}
+.mk.bad text{fill:var(--pill-negative-ink);font-weight:500}
+.mk.hl rect{fill:var(--accent-tint);stroke-width:2}
+.mk.bad.hl rect{fill:var(--pill-negative-bg);stroke-width:2.5}
+.door .halo{fill:var(--accent-tint);opacity:0}
+.door.hl .halo{opacity:1}
+.bld.hl{stroke-width:3}
+tr.hl td{background:var(--raised)}
+.src{margin-left:6px;font-size:12px;font-weight:400;color:var(--muted)}
+.cite a,.fact dt a,.rules td a{color:inherit;text-decoration:underline;text-decoration-color:var(--control);text-underline-offset:2px}
+.cite a:hover,.fact dt a:hover,.rules td a:hover{text-decoration-color:var(--text)}
+.plot figcaption{padding:10px 2px 0;font-size:12px;line-height:16px;color:var(--muted)}
 figure{margin:0}
-.facts{margin-top:16px}
+.facts{margin-top:20px}
 .fact{padding:9px 0;border-bottom:1px solid var(--rule)}
 .fact:last-child{border-bottom:0}
 .fact dt{font-size:12px;line-height:16px;color:var(--muted)}
@@ -138,7 +151,7 @@ td{padding:9px 12px 9px 0;border-top:1px solid var(--rule);vertical-align:top}
 th:last-child,td:last-child{padding-right:0}
 th.num,td.num{text-align:right;white-space:nowrap}
 td .cite{display:block;font-size:12px;line-height:16px;color:var(--muted)}
-td .note{display:block;font-size:12px;line-height:16px;color:var(--muted);margin-top:2px}
+td .note{display:block;font-size:12px;line-height:16px;font-weight:400;color:var(--muted);margin-top:2px}
 td.res{text-align:right}
 td.bad{color:var(--negative);font-weight:500}
 
@@ -147,7 +160,7 @@ td.bad{color:var(--negative);font-weight:500}
 .letter-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)}
 
 /* pre-check */
-.pre{display:grid;grid-template-columns:380px minmax(0,1fr);gap:var(--gap);align-items:start}
+.pre{display:grid;grid-template-columns:340px minmax(0,1fr);gap:var(--gap);align-items:start}
 .card{border:1px solid var(--border);border-radius:var(--r-card);padding:20px}
 .card h2{font-size:16px;line-height:24px;font-weight:600;margin-bottom:14px}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -157,7 +170,7 @@ td.bad{color:var(--negative);font-weight:500}
 .field input,.field select{height:38px;border:1px solid var(--control);border-radius:8px;background:#fff;padding:0 12px;width:100%}
 .check{grid-column:1/-1;display:flex;gap:10px;align-items:flex-start}
 .check input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--primary)}
-.pre-out{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
+.pre-out{display:grid;grid-template-columns:392px minmax(0,1fr);gap:var(--gap);align-items:start}
 .form-foot{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
 
 .seg{display:inline-flex;gap:2px;padding:2px;background:var(--raised);border-radius:8px;flex:none}
@@ -178,8 +191,6 @@ td.bad{color:var(--negative);font-weight:500}
 /* tablet and phone */
 @media (max-width:1280px){
   .d-body,.pre-out{grid-template-columns:1fr}
-  .d-left{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
-  .facts{margin-top:0}
 }
 @media (max-width:1100px){
   .frame{grid-template-columns:1fr}
@@ -213,8 +224,6 @@ td.bad{color:var(--negative);font-weight:500}
   .d-head{flex-direction:column;gap:14px}
   .d-actions{align-items:stretch;width:100%}
   .d-actions .btn{height:44px}
-  .d-left{grid-template-columns:1fr}
-  .facts{margin-top:16px}
   .clock-ends{flex-direction:column;gap:2px}
   .clock-ends span:last-child{text-align:left}
   .d-tabs{gap:18px;overflow-x:auto}
@@ -302,7 +311,8 @@ const ES = {
  'R-E district limit (Table 17.30-1)':'Límite del distrito R-E (Tabla 17.30-1)','R-L district limit (Table 17.30-2)':'Límite del distrito R-L (Tabla 17.30-2)',
  'R-M district limit (Table 17.30-3)':'Límite del distrito R-M (Tabla 17.30-3)','R-H district limit (Table 17.30-4)':'Límite del distrito R-H (Tabla 17.30-4)',
  'None required: studio':'No se requiere: estudio','None required: garage conversion':'No se requiere: conversión de garaje','None required: near a transit stop':'No se requiere: cerca de una parada de transporte',
- 'A planner compares the elevations with the house':'Un planificador compara las elevaciones con la casa',
+ 'Planner compares with the house':'La ciudad lo compara con la casa',
+ 'Site plan':'Plano del sitio','Elevation':'Elevación','Lot':'Lote','Drawn from your answers. Not a survey.':'Dibujado con sus respuestas. No es un levantamiento topográfico.',
  'House':'Casa','Rear':'Posterior','Side':'Lado','Street':'Calle',
  'Drawn from the plan dimensions on a 60 by 110 ft lot. Not a survey.':'Dibujado con las medidas del plano en un lote de 60 por 110 pies. No es un levantamiento topográfico.',
  'Impact fees':'Cuotas de impacto','None: under 750 sq ft':'Ninguna: menos de 750 pies²','In proportion to the house':'En proporción a la casa','Utility connection':'Conexión de servicios',
@@ -316,19 +326,19 @@ const tv = s => { if(LANG!=='es' || s==null) return s; if(ES[s]) return ES[s];
 
 /* ---------- sample applications (replace with real ones) ---------- */
 const SEED = [
- {id:'ADU-2026-027', applicant:'Marisol Ortega', address:'418 Walnut Avenue', street:'Walnut Avenue', kind:'detached', bedrooms:2, area:960, height:15.5, side:4, rear:3, separation:8, primaryArea:1640, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+ {id:'ADU-2026-027', applicant:'Marisol Ortega', address:'418 Walnut Avenue', street:'Walnut Avenue', lot:{w:60,d:110}, kind:'detached', bedrooms:2, area:960, height:15.5, side:4, rear:3, separation:8, primaryArea:1640, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
   submitted:'2026-09-24', completeOn:'2026-09-24', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-07-30',utility:true}},
- {id:'ADU-2026-034', applicant:'Teresa Villanueva', address:'1207 Apple Avenue', street:'Apple Avenue', kind:'jadu', bedrooms:1, area:480, primaryArea:1750, withinWalls:true, kitchen:true, ownerOcc:true, entrance:true,
+ {id:'ADU-2026-034', applicant:'Teresa Villanueva', address:'1207 Apple Avenue', street:'Apple Avenue', lot:{w:65,d:100}, kind:'jadu', bedrooms:1, area:480, primaryArea:1750, withinWalls:true, kitchen:true, ownerOcc:true, entrance:true,
   submitted:'2026-11-02', completeOn:null, stage:'intake', docs:{form:true,fee:true,plans:true,title:'2026-09-18',utility:true,deed:false}},
- {id:'ADU-2026-036', applicant:'Robert Kessler', address:'540 Oak Avenue', street:'Oak Avenue', kind:'detached', bedrooms:1, area:748, height:17, side:5, rear:5, separation:12, primaryArea:1480, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+ {id:'ADU-2026-036', applicant:'Robert Kessler', address:'540 Oak Avenue', street:'Oak Avenue', lot:{w:60,d:120}, kind:'detached', bedrooms:1, area:748, height:17, side:5, rear:5, separation:12, primaryArea:1480, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
   submitted:'2026-11-09', completeOn:null, stage:'intake', docs:{form:true,fee:true,plans:true,title:'2026-03-30',utility:true}},
- {id:'ADU-2026-031', applicant:'Daniel Reyes', address:'233 Elm Avenue', street:'Elm Avenue', kind:'conversion', bedrooms:0, area:420, side:2, rear:3, separation:10, primaryArea:1320, parking:0, transitStop:false, entrance:true, utilities:true,
+ {id:'ADU-2026-031', applicant:'Daniel Reyes', address:'233 Elm Avenue', street:'Elm Avenue', lot:{w:60,d:100}, kind:'conversion', bedrooms:0, area:420, side:2, rear:3, separation:10, primaryArea:1320, parking:0, transitStop:false, entrance:true, utilities:true,
   submitted:'2026-10-09', completeOn:'2026-10-09', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-08-21',utility:true}},
- {id:'ADU-2026-029', applicant:'Huong Tran', address:'96 Tenth Street', street:'Tenth Street', kind:'attached', zone:'R-L', bedrooms:1, area:880, height:14, side:5, rear:22, separation:0, primaryArea:1900, parking:1, transitStop:true, entrance:true, utilities:true,
+ {id:'ADU-2026-029', applicant:'Huong Tran', address:'96 Tenth Street', street:'Tenth Street', lot:{w:70,d:100}, kind:'attached', zone:'R-L', bedrooms:1, area:880, height:14, side:5, rear:22, separation:0, primaryArea:1900, parking:1, transitStop:true, entrance:true, utilities:true,
   submitted:'2026-10-20', completeOn:'2026-10-20', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-09-02',utility:true}},
- {id:'ADU-2026-022', applicant:'Guadalupe Mendoza', address:'62 Palm Avenue', street:'Palm Avenue', kind:'detached', bedrooms:2, area:1000, height:16, side:3.5, rear:4, separation:9, primaryArea:1560, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+ {id:'ADU-2026-022', applicant:'Guadalupe Mendoza', address:'62 Palm Avenue', street:'Palm Avenue', lot:{w:60,d:110}, kind:'detached', bedrooms:2, area:1000, height:16, side:3.5, rear:4, separation:9, primaryArea:1560, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
   submitted:'2026-09-14', completeOn:'2026-09-14', stage:'waiting', sentOn:'2026-10-28', sentKind:'comments', docs:{form:true,fee:true,plans:true,title:'2026-06-11',utility:true}},
- {id:'ADU-2026-019', applicant:'Anh Pham', address:'310 Thirteenth Street', street:'Thirteenth Street', kind:'conversion', bedrooms:1, area:510, side:4, rear:5, separation:7, primaryArea:1410, parking:0, transitStop:false, entrance:true, utilities:true,
+ {id:'ADU-2026-019', applicant:'Anh Pham', address:'310 Thirteenth Street', street:'Thirteenth Street', lot:{w:60,d:105}, kind:'conversion', bedrooms:1, area:510, side:4, rear:5, separation:7, primaryArea:1410, parking:0, transitStop:false, entrance:true, utilities:true,
   submitted:'2026-10-02', completeOn:'2026-10-02', stage:'approved', decidedOn:'2026-11-05', confirmed:{design:true}, docs:{form:true,fee:true,plans:true,title:'2026-07-08',utility:true}},
 ];
 let APPS = JSON.parse(JSON.stringify(SEED));
@@ -392,7 +402,7 @@ const RULES = [
  {id:'design', group:'adu', label:'Design match', cite:'§ 17.90.020L',
   text:'A unit visible from the street has the same architectural style, detail, color and materials as the primary dwelling. Other detached units match its color and materials.',
   applies:a=>a.kind!=='jadu',
-  check:a=>({status:'staff', found:'Elevations', required:'match', note:'A planner compares the elevations with the house'})},
+  check:a=>({status:'staff', found:'Elevations', required:'match', note:'Planner compares with the house'})},
  {id:'jsize', group:'jadu', label:'Unit size', cite:'§ 17.90.030D',
   text:'No more than 500 sq ft, not counting a shared bathroom in the primary dwelling.',
   applies:a=>a.kind==='jadu',
@@ -498,53 +508,76 @@ function letterFor(a, ev, kind){
   return head + body + `\nPlanning Department\nCity of Greenfield`;
 }
 
-/* ---------- lot diagram: drawn from the application's own numbers ---------- */
-function lotDiagram(a){
-  const lot = {w:60, d:110}, s = 2.5, L = LANG==='es' ? (a.kind==='conversion' ? 50 : 72) : 62, T = 26, W = 280, H = T + lot.d*s + 30;
+/* ---------- plan sheet: drawn from the application's own numbers; outlined values are the ones the check read ---------- */
+const SRC = {size:'A1',minsize:'A1',side:'A1',rear:'A1',sep:'A1',height:'A3',parking:'A1',entrance:'A1',utilities:'A1',design:'A3',jsize:'A1',jwalls:'A1',jentrance:'A1',jkitchen:'A1',jowner:'Form'};
+const CODE_URL = 'https://ecode360.com/47084735#';
+const CITE_ID = {'§ 17.90.020D':'47084752','§ 17.90.020E':'47084753','§ 17.90.020F.2':'47084756','§ 17.90.020F.3':'47084757','§ 17.90.020F.5':'47084759','§ 17.90.020H':'47084763','§ 17.90.020I':'47084764',
+  '§ 17.90.020J':'47084776','§ 17.90.020K':'47084777','§ 17.90.020L':'47084778','§ 17.90.030B':'47084784','§ 17.90.030D':'47084786','§ 17.90.030G':'47084789','§ 17.90.030I':'47084791','§ 17.90.030J.1':'47084793',
+  '§ 17.90.040A':'47084797','§ 17.90.040B.1':'47084799','§ 17.90.040B.2':'47084800','§ 17.90.040C':'47084802','§ 17.90.040D':'47084803','§ 17.90.040E':'47084804','§ 17.90.050':'47084811','§ 17.90.060B':'47084823'};
+const citeLink = c => CITE_ID[c] ? `<a href="${CODE_URL}${CITE_ID[c]}" target="_blank" rel="noopener">${c}</a>` : c;
+function lotDiagram(a, mode){
+  const isPre = mode==='pre', lot = a.lot || {w:60, d:110}, s = 3.3, W = 360, L = (W - lot.w*s)/2, T = 36;
   const X = f => L + f*s, Y = f => T + f*s;
-  const ev = evaluate(a), bad = id => ev.fails.some(c=>c.rule.id===id);
-  const hw = 50, hd = a.primaryArea/hw, hx = 5;
-  let adu, hy, parts = '', dims = '';
-  const dim = (x1,y1,x2,y2,label,lx,ly,anchor,isBad) => {
-    const c = isBad ? 'var(--negative)' : 'var(--muted)';
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${isBad?1.5:1}"/><text x="${lx}" y="${ly}" text-anchor="${anchor}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${label}</text>`;
-  };
-  if(a.kind==='jadu'){
-    hy = lot.d - 22 - hd; const jw = 22, jd = a.area/jw;
-    adu = {x:hx, y:hy+hd-jd, w:jw, d:jd, label:'JADU'};
-  } else if(a.kind==='conversion'){
-    const gw = 20, gd = a.area/gw; adu = {x:lot.w-a.side-gw, y:a.rear, w:gw, d:gd, label:'ADU'};
-    hy = adu.y + gd + a.separation;
-  } else {
-    const aw = Math.min(lot.w - a.side - 6, Math.round(Math.sqrt(a.area*1.4))), ad = a.area/aw;
-    adu = {x:a.side, y:a.rear, w:aw, d:ad, label:'ADU'};
-    hy = adu.y + ad + (a.kind==='attached' ? 0 : a.separation);
+  const ev = evaluate(a), bad = (...ids) => ev.fails.some(c=>ids.includes(c.rule.id));
+  const area = Math.max(a.area||0, 1), hw = lot.w - 10, hd = Math.min(Math.max(a.primaryArea||0, 1)/hw, lot.d - 30), hx = 5;
+  const hasElev = (a.kind==='detached'||a.kind==='attached') && a.height > 0;
+  let adu, hy;
+  if(a.kind==='jadu'){ hy = lot.d - 22 - hd; const jw = 22, jd = Math.min(area/jw, hd); adu = {x:hx, y:hy+hd-jd, w:jw, d:jd, label:'JADU'}; }
+  else if(a.kind==='conversion'){ const gw = 20, gd = Math.min(area/gw, 40); adu = {x:lot.w-a.side-gw, y:a.rear, w:gw, d:gd, label:'ADU'}; hy = adu.y + gd + (a.separation||0); }
+  else { const aw = Math.max(8, Math.min(lot.w - a.side - 6, Math.round(Math.sqrt(area*1.4)))), ad = Math.min(area/aw, lot.d - a.rear - 30);
+    adu = {x:a.side, y:a.rear, w:aw, d:ad, label:'ADU'}; hy = adu.y + ad + (a.kind==='attached' ? 0 : (a.separation||0)); }
+  hy = Math.max(0, Math.min(hy, lot.d - hd - 4));
+  const yStreet = Y(lot.d), yElev = yStreet + 30, elevH = hasElev ? 108 : 0, yTitle = yElev + elevH, H = yTitle + 44;
+  const tw = str => String(str).length*6.3 + 12;
+  const mark = (ids, x, y, anchor, text, isBad) => { const w = tw(text), x0 = anchor==='middle' ? x - w/2 : anchor==='end' ? x - w : x;
+    return `<g class="mk${isBad?' bad':''}" data-mark="${ids}"><rect x="${x0}" y="${y-13}" width="${w}" height="18" rx="3"/><text x="${x0+w/2}" y="${y}" text-anchor="middle" font-size="11">${text}</text></g>`; };
+  const plain = (x, y, anchor, text) => `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="11" fill="var(--muted)">${text}</text>`;
+  const dimLine = (x1, y1, x2, y2, isBad) => { const tick = (x, y) => x1===x2 ? `M${x-3} ${y}h6` : `M${x} ${y-3}v6`;
+    return `<path d="M${x1} ${y1}L${x2} ${y2}${tick(x1,y1)}${tick(x2,y2)}" stroke="${isBad?'var(--negative)':'var(--text)'}" stroke-width="${isBad?1.5:1}" fill="none"/>`; };
+  const cx = X(adu.x + adu.w/2), cy = Y(adu.y + adu.d/2);
+  let g = `<rect x="0.5" y="0.5" width="${W-1}" height="${H-1}" fill="#fff" stroke="var(--control)"/>`;
+  g += plain(14, 20, 'start', isPre ? t('Site plan') : 'A1 · Site plan');
+  g += `<path d="M${W-20} 25V9m-4 5 4-5 4 5" stroke="var(--text)" fill="none"/>` + plain(W-30, 21, 'end', 'N');
+  g += `<rect x="${X(0)}" y="${Y(0)}" width="${lot.w*s}" height="${lot.d*s}" fill="none" stroke="var(--text)" stroke-dasharray="12 3 2 3"/>`;
+  if(a.kind==='detached'||a.kind==='attached') g += `<path d="M${X(4)} ${Y(lot.d)}V${Y(4)}H${X(lot.w-4)}V${Y(lot.d)}" fill="none" stroke="var(--control)" stroke-dasharray="3 3"/>`;
+  g += `<rect x="${X(hx)}" y="${Y(hy)}" width="${hw*s}" height="${hd*s}" fill="#e6eae5" stroke="#9aa19a"/>`;
+  g += a.kind==='jadu' ? plain(X(hx+hw) - 8, Y(hy) + 18, 'end', `${t('House')} ${n(a.primaryArea)} ${sqft()}`)
+                       : plain(X(hx+hw/2), Y(hy+hd/2) + 4, 'middle', `${t('House')} ${n(a.primaryArea)} ${sqft()}`);
+  g += `<rect x="${X(adu.x)}" y="${Y(adu.y)}" width="${adu.w*s}" height="${adu.d*s}" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.5"/>`;
+  g += `<text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="12" font-weight="500" fill="var(--text)">${adu.label}</text>`;
+  g += mark(a.kind==='jadu' ? 'jsize jwalls' : 'size minsize', cx, cy+12, 'middle', `${n(a.area)} ${sqft()}`, bad('size','minsize','jsize'));
+  if(a.entrance===true){
+    const side = a.kind==='attached' || a.kind==='jadu', dx = X(adu.x), dy = Y(adu.y + adu.d);
+    g += side ? `<g class="door" data-mark="entrance jentrance"><circle class="halo" cx="${dx-4}" cy="${dy-20}" r="13"/><path d="M${dx} ${dy-25}v10" stroke="#fff" stroke-width="3"/><path d="M${dx} ${dy-25}h-10a10 10 0 0 0 10 10" stroke="var(--accent)" fill="none"/></g>`
+              : `<g class="door" data-mark="entrance jentrance"><circle class="halo" cx="${dx+15}" cy="${dy+4}" r="13"/><path d="M${dx+10} ${dy}h10" stroke="#fff" stroke-width="3"/><path d="M${dx+10} ${dy}v10a10 10 0 0 0 10-10" stroke="var(--accent)" fill="none"/></g>`;
   }
-  hy = Math.min(hy, lot.d - hd - 4);
-  // the 4 ft envelope for new construction
-  if(a.kind==='detached'||a.kind==='attached')
-    parts += `<path d="M${X(4)} ${Y(lot.d)}V${Y(4)}H${X(lot.w-4)}V${Y(lot.d)}" fill="none" stroke="var(--control)" stroke-dasharray="3 3"/>`;
-  parts += `<rect x="${X(hx)}" y="${Y(hy)}" width="${hw*s}" height="${hd*s}" fill="#dfe4de"/>`;
-  parts += `<text x="${X(hx+hw/2)}" y="${Y(hy+hd/2)+ (a.kind==='jadu'?-14:4)}" text-anchor="middle" font-size="11" fill="var(--muted)">${t('House')} ${n(a.primaryArea)} ${sqft()}</text>`;
-  parts += `<rect x="${X(adu.x)}" y="${Y(adu.y)}" width="${adu.w*s}" height="${adu.d*s}" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.5"/>`;
-  parts += `<text x="${X(adu.x+adu.w/2)}" y="${Y(adu.y+adu.d/2)-2}" text-anchor="middle" font-size="12" font-weight="500" fill="var(--text)">${adu.label}</text>`;
-  parts += `<text x="${X(adu.x+adu.w/2)}" y="${Y(adu.y+adu.d/2)+12}" text-anchor="middle" font-size="11" fill="var(--text)">${n(a.area)} ${sqft()}</text>`;
   if(a.kind!=='jadu'){
-    const cx = X(adu.x+adu.w/2), cy = Y(adu.y+adu.d/2);
-    dims += dim(cx, Y(0), cx, Y(adu.y), `${t('Rear')} ${a.rear} ${ft()}`, cx, T-8, 'middle', bad('rear'));
-    if(a.kind==='conversion') dims += dim(X(adu.x+adu.w), cy, X(lot.w), cy, `${t('Side')} ${a.side} ${ft()}`, X(lot.w)+6, cy+4, 'start', bad('side'));
-    else dims += dim(X(0), cy, X(adu.x), cy, `${t('Side')} ${a.side} ${ft()}`, L-6, cy+4, 'end', bad('side'));
-    if(a.kind!=='attached'){ const gx = X(adu.x+adu.w/2), gy1 = Y(adu.y+adu.d), gy2 = Y(hy);
-      dims += dim(gx, gy1, gx, gy2, (LANG==='es' ? `${a.separation} pies a la casa` : `${a.separation} ft to house`), gx+6, (gy1+gy2)/2+4, 'start', bad('sep')); }
-    if(a.height!=null && a.kind!=='conversion'){ const isBad = bad('height'), c = isBad?'var(--negative)':'var(--muted)';
-      dims += `<text x="${X(lot.w)+6}" y="${Y(adu.y)+12}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${t('Height')}</text><text x="${X(lot.w)+6}" y="${Y(adu.y)+26}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${a.height} ${ft()}</text>`; }
+    g += dimLine(cx, Y(0), cx, Y(adu.y), bad('rear')) + mark('rear', cx, T-10, 'middle', `${t('Rear')} ${a.rear} ${ft()}`, bad('rear'));
+    if(a.kind==='conversion') g += dimLine(X(adu.x+adu.w), cy, X(lot.w), cy, bad('side')) + plain(X(lot.w)+8, cy-12, 'start', t('Side')) + mark('side', X(lot.w)+8, cy+6, 'start', `${a.side} ${ft()}`, bad('side'));
+    else g += dimLine(X(0), cy, X(adu.x), cy, bad('side')) + plain(L-8, cy-12, 'end', t('Side')) + mark('side', L-8, cy+6, 'end', `${a.side} ${ft()}`, bad('side'));
+    if(a.kind!=='attached'){ const gy1 = Y(adu.y+adu.d), gy2 = Y(hy), txt = LANG==='es' ? `${a.separation} pies a la casa` : `${a.separation} ft to house`;
+      g += dimLine(cx, gy1, cx, gy2, bad('sep')) + (a.kind==='detached' ? mark('sep', cx+8, (gy1+gy2)/2+4, 'start', txt, bad('sep')) : plain(cx+8, (gy1+gy2)/2+4, 'start', txt)); }
+    const front = lot.d - (hy + hd);
+    if(a.parking>=1 && front>=19){ const px = hx+hw-9, py = lot.d-19;
+      g += `<rect x="${X(px)}" y="${Y(py)}" width="${9*s}" height="${18*s}" fill="none" stroke="#9aa19a"/>` + mark('parking', X(px)-8, Y(py+9)+4, 'end', tv(plural(a.parking,'space')), bad('parking')); }
+    else if(bad('parking')) g += mark('parking', X(lot.w/2), Y(lot.d)-10, 'middle', tv(plural(a.parking||0,'space')), true);
   }
-  const label = `Lot diagram for ${a.address||'this design'}: ${adu.label} of ${n(a.area)} square feet` + (a.kind!=='jadu' ? `, rear setback ${a.rear} feet, side setback ${a.side} feet` : ' inside the house');
-  return `<figure class="plot"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" font-family="IBM Plex Sans, sans-serif">
-    <rect x="${X(0)}" y="${Y(0)}" width="${lot.w*s}" height="${lot.d*s}" fill="#fff" stroke="var(--control)"/>
-    ${parts}${dims}
-    <text x="${X(lot.w/2)}" y="${Y(lot.d)+18}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(a.street||t('Street'))}</text>
-  </svg><figcaption>${t('Drawn from the plan dimensions on a 60 by 110 ft lot. Not a survey.')}</figcaption></figure>`;
+  g += plain(W/2, yStreet+19, 'middle', esc(a.street||t('Street')));
+  if(hasElev){
+    const gy = yElev + elevH - 14, bw = Math.min(adu.w*s, 130), bx = W/2 - bw/2 - 30, pk = Math.min(a.height*s, 84), wall = pk*0.62, hx2 = bx + bw + 16;
+    g += `<path d="M0.5 ${yElev}H${W-0.5}" stroke="var(--control)"/>` + plain(14, yElev+18, 'start', isPre ? t('Elevation') : 'A3 · Elevation');
+    g += `<path d="M40 ${gy}H${W-40}" stroke="var(--text)"/>`;
+    g += `<path class="bld" data-mark="design" d="M${bx} ${gy}V${gy-wall}L${bx+bw/2} ${gy-pk}L${bx+bw} ${gy-wall}V${gy}Z" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.5"/>`;
+    if(a.kind==='detached'){ const lim = a.majorTransit ? 18 : 16, ly = gy - lim*s;
+      g += `<path d="M14 ${ly}H${bx+bw+8}" stroke="var(--control)" stroke-dasharray="3 3"/>` + plain(14, ly-5, 'start', LANG==='es' ? `Límite ${lim} pies` : `${lim} ft limit`); }
+    g += dimLine(hx2, gy, hx2, gy-pk, bad('height')) + mark('height', hx2+8, gy-pk/2+4, 'start', `${t('Height')} ${a.height} ${ft()}`, bad('height'));
+  }
+  g += `<path d="M0.5 ${yTitle}H${W-0.5}" stroke="var(--control)"/>`;
+  g += `<text x="14" y="${yTitle+18}" font-size="11" font-weight="500" fill="var(--text)">${esc(a.address||'')}</text>` + plain(14, yTitle+33, 'start', (LANG==='es' ? KIND_ES : KIND)[a.kind]);
+  g += plain(W-14, yTitle+18, 'end', `${t('Lot')} ${lot.w} × ${lot.d} ${ft()}`) + (isPre ? '' : plain(W-14, yTitle+33, 'end', a.id));
+  const label = `Plan sheet for ${a.address||'this design'}: ${adu.label} of ${n(a.area)} square feet` + (a.kind!=='jadu' ? `, rear setback ${a.rear} feet, side setback ${a.side} feet` : ' inside the house');
+  const cap = isPre ? t('Drawn from your answers. Not a survey.') : "Sample sheet drawn from this application's numbers. In the product this is the applicant's uploaded plan. Outlined values are what the check read.";
+  return `<figure class="plot"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" font-family="IBM Plex Sans, sans-serif">${g}</svg><figcaption>${cap}</figcaption></figure>`;
 }
 function facts(a){
   const pct = (a.area/a.primaryArea*100).toFixed(1);
@@ -553,17 +586,22 @@ function facts(a){
     [t('Utility connection'), t(a.kind==='detached'||a.kind==='attached' ? 'Separate connections required' : 'No separate connection required'), '§ 17.90.020K'],
     [t('Rental term'), t('30 consecutive days or longer'), '§ 17.90.060B'],
   ];
-  return `<dl class="facts">${rows.map(r=>`<div class="fact"><dt>${r[0]} · ${r[2]}</dt><dd>${r[1]}</dd></div>`).join('')}</dl>`;
+  return `<dl class="facts">${rows.map(r=>`<div class="fact"><dt>${r[0]} · ${citeLink(r[2])}</dt><dd>${r[1]}</dd></div>`).join('')}</dl>`;
 }
-function checksTable(ev, mode){
+function checksTable(ev, mode, showSrc, compact){
   const res = c => {
     if(c.status==='fail') return `<span class="pill pill-neg">${t('Not met')}</span>`;
     if(c.status==='staff') return mode==='staff' ? `<button class="btn btn-small" type="button" data-confirm="${c.rule.id}">Confirm</button>` : `<span class="muted">${t('Planner reviews')}</span>`;
     return `<span class="muted">${t(c.confirmed?'Confirmed':'Meets')}</span>`;
   };
+  const name = c => `<td class="name">${t(c.rule.label)}<span class="cite">${citeLink(c.rule.cite)}${c.note?' · '+t(c.note):''}</span></td>`;
+  if(compact) return `<table class="stack"><thead><tr><th>${t('Standard')}</th><th class="num">${t('Plans show')}</th><th class="num">${t('Result')}</th></tr></thead><tbody>
+  ${ev.checks.map(c=>`<tr data-rule="${c.rule.id}">${name(c)}
+    <td class="num${c.status==='fail'?' bad':''}" data-h="${t('Plans show')}">${tv(c.found)}<span class="note">${tv(c.required)}</span></td><td class="res">${res(c)}</td></tr>`).join('')}
+  </tbody></table>`;
   return `<table class="stack"><thead><tr><th>${t('Standard')}</th><th class="num">${t('Plans show')}</th><th class="num">${t('Code requires')}</th><th class="num">${t('Result')}</th></tr></thead><tbody>
-  ${ev.checks.map(c=>`<tr><td class="name">${t(c.rule.label)}<span class="cite">${c.rule.cite}${c.note?' · '+t(c.note):''}</span></td>
-    <td class="num${c.status==='fail'?' bad':''}" data-h="${t('Plans show')}">${tv(c.found)}</td><td class="num" data-h="${t('Code requires')}">${tv(c.required)}</td><td class="res">${res(c)}</td></tr>`).join('')}
+  ${ev.checks.map(c=>`<tr data-rule="${c.rule.id}">${name(c)}
+    <td class="num${c.status==='fail'?' bad':''}" data-h="${t('Plans show')}">${tv(c.found)}${showSrc ? `<span class="src">${SRC[c.rule.id]||''}</span>` : ''}</td><td class="num" data-h="${t('Code requires')}">${tv(c.required)}</td><td class="res">${res(c)}</td></tr>`).join('')}
   </tbody></table>`;
 }
 
@@ -624,8 +662,8 @@ function detail(a){
       : `<b>Meets all ${ev.measured.length} measured standards.</b>` + (ev.staff.length ? ` ${plural(ev.staff.length,'item')} ${ev.staff.length===1?'needs':'need'} a planner's eye before approval.` : ' Ready for a ministerial permit under § 17.90.050A.');
   const dtab = (id,label,count) => `<button class="tab" role="tab" type="button" aria-selected="${ui.dtab===id}" data-dtab="${id}">${label}${count!=null?`<span class="n">${count}</span>`:''}</button>`;
   let body;
-  if(ui.dtab==='check') body = `<div class="d-body"><div class="d-left">${lotDiagram(a)}${facts(a)}</div><div>${checksTable(ev,(a.stage==='review'||a.stage==='intake')?'staff':'read')}</div></div>`;
-  else if(ui.dtab==='docs') body = `<table class="stack"><thead><tr><th>Document</th><th class="num">Result</th></tr></thead><tbody>${ev.docs.map(x=>`<tr><td class="name">${x.doc.label}<span class="cite">${x.doc.cite}${x.note?' · '+x.note:''}</span></td><td class="res">${x.status==='ok'?'<span class="muted">Received</span>':x.status==='stale'?'<span class="pill pill-neg">Out of date</span>':'<span class="pill pill-neg">Missing</span>'}</td></tr>`).join('')}</tbody></table>`;
+  if(ui.dtab==='check') body = `<div class="d-body">${lotDiagram(a,'staff')}<div>${checksTable(ev,(a.stage==='review'||a.stage==='intake')?'staff':'read',true)}${facts(a)}</div></div>`;
+  else if(ui.dtab==='docs') body = `<table class="stack"><thead><tr><th>Document</th><th class="num">Result</th></tr></thead><tbody>${ev.docs.map(x=>`<tr><td class="name">${x.doc.label}<span class="cite">${citeLink(x.doc.cite)}${x.note?' · '+x.note:''}</span></td><td class="res">${x.status==='ok'?'<span class="muted">Received</span>':x.status==='stale'?'<span class="pill pill-neg">Out of date</span>':'<span class="pill pill-neg">Missing</span>'}</td></tr>`).join('')}</tbody></table>`;
   else { const sent = a.stage==='waiting';
     body = `<label class="muted" for="letter" style="display:block;margin-bottom:8px">${sent?'Sent to':'To'} ${esc(a.applicant)}. ${sent?'':'Drafted from the check. Edit anything before it goes out.'}</label>
       <textarea class="letter" id="letter" ${sent?'readonly':''}>${esc(ui.letters[a.id])}</textarea>
@@ -696,13 +734,13 @@ function drawPre(){
   try {
     const ev = preEval();
     document.getElementById('pre-sum').textContent = preSummary(ev);
-    document.getElementById('pre-out').innerHTML = `<div class="d-left">${lotDiagram(pre)}${facts(pre)}</div><div>${checksTable(ev,'read')}</div>`;
+    document.getElementById('pre-out').innerHTML = `${lotDiagram(pre,'pre')}<div>${checksTable(ev,'read',false,true)}${facts(pre)}</div>`;
   } finally { LANG = 'en'; }
 }
 
 /* ---------- rules ---------- */
 function renderRules(){
-  const table = rows => `<table><thead><tr><th>Standard</th><th>What the code says</th><th>Source</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${r.text}</td><td>${r.cite}</td></tr>`).join('')}</tbody></table>`;
+  const table = rows => `<table><thead><tr><th>Standard</th><th>What the code says</th><th>Source</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${r.text}</td><td>${citeLink(r.cite)}</td></tr>`).join('')}</tbody></table>`;
   const adu = RULES.filter(r=>r.group==='adu'), jadu = RULES.filter(r=>r.group==='jadu'), total = adu.length+jadu.length+DOCS.length+STATE_RULES.length;
   view.innerHTML = `
     <div class="title-row"><div><h1>Rules</h1><p class="finding">${total} rules the check runs on. Every finding and every letter cites its section.</p></div><span class="stamp">Ord. 574, adopted 2025</span></div>
@@ -771,6 +809,13 @@ view.addEventListener('submit', e=>{
   APPS.push(app); Object.assign(ui,{tab:'open',selected:id,dtab:'check',query:'',showDetail:true});
   location.hash = '#/applications';
 });
+const hl = (e, on) => {
+  const row = e.target.closest && e.target.closest('tr[data-rule]'), mk = e.target.closest && e.target.closest('[data-mark]');
+  if(row) view.querySelectorAll(`[data-mark~="${row.dataset.rule}"]`).forEach(m=>m.classList.toggle('hl', on));
+  if(mk) mk.getAttribute('data-mark').split(' ').forEach(id=>{ const r = view.querySelector(`tr[data-rule="${id}"]`); if(r) r.classList.toggle('hl', on); });
+};
+view.addEventListener('mouseover', e=>hl(e,true)); view.addEventListener('mouseout', e=>hl(e,false));
+view.addEventListener('focusin', e=>hl(e,true)); view.addEventListener('focusout', e=>hl(e,false));
 render();
 </script>
 </body>
