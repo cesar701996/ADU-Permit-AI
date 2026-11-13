@@ -1,0 +1,8 @@
+# design-check screenshots, regenerated on every run
+.taste-skill/inspect/
+.taste-skill/before/
+.taste-skill/after/
+
+# never commit secrets
+.env
+*.key

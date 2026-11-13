@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADU Permit AI · City of Greenfield demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Framed sheet (tasteskill app sheet, seed 979012743). Face: the frame tinted a field green-grey for Greenfield;
+   the one hue (teal) sits on the deadline track and the ADU footprint.
+   Grid at 1440: sidebar 228 + sheet 1204 + inset 8 = 1440. Inside the sheet: 24 + list 340 + 24 + detail 792 + 24 = 1204. */
+:root{
+  --ground:#f4f7f3; --surface:#ffffff; --raised:#f3f5f2; --active:#e7ebe6;
+  --border:#e4e8e3; --rule:#eef1ed; --control:#c9cec8;
+  --text:#131416; --muted:#565a58; --accent:#1b6c80; --accent-tint:#dcebee;
+  --primary:#1d1f20; --positive:#1e7b4f; --negative:#c4242a; --warning:#92400e;
+  --pill-negative-bg:#ffedea; --pill-negative-ink:#831c1e;
+  --pill-warning-bg:#fffbeb; --pill-warning-ink:#92400e; --pill-warning-line:#fde68a;
+  --pill-positive-bg:#dcfae5; --pill-positive-ink:#04250e;
+  --pill-neutral-bg:#e7ebe6; --pill-neutral-ink:#353736;
+  --r-card:8px; --r-control:6px; --r-sheet:16px; --gap:24px;
+  --font:"IBM Plex Sans",Inter,system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:400 14px/20px var(--font);color:var(--text);background:var(--ground);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono);font-size:12px}
+.muted{color:var(--muted)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* shell */
+.frame{display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;height:36px;padding:0 8px;font-weight:600;text-decoration:none}
+.scope{margin:14px 8px 18px;font-size:12px;line-height:16px;color:var(--muted)}
+.scope b{display:block;font-weight:500;font-size:14px;line-height:20px;color:var(--text)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:8px;text-decoration:none;color:var(--muted)}
+.nav a svg{flex:none}
+.nav a:hover{color:var(--text)}
+.nav a[aria-current="page"]{background:var(--active);color:var(--text)}
+.nav .count{margin-left:auto;font-size:12px;color:var(--text)}
+.nav-label{margin:22px 10px 8px;font-size:12px;color:var(--muted)}
+.side-foot{margin-top:auto;padding:0 8px;font-size:12px;line-height:17px;color:var(--muted)}
+.side-foot button{margin-top:10px}
+.side-search{display:none;margin:0 0 12px}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:5;height:48px;display:flex;align-items:center;gap:16px;padding:0 16px 0 0;background:var(--ground)}
+.menu-btn{display:none}
+.top-name{display:none;font-weight:600}
+.search{flex:0 1 420px;margin:0 auto;position:relative}
+.search input,.side-search input{width:100%;height:32px;border:1px solid var(--control);border-radius:var(--r-control);background:#fff;padding:0 12px 0 34px}
+.search svg{position:absolute;left:11px;top:9px;color:var(--muted)}
+.top-right{font-size:12px;color:var(--muted);white-space:nowrap}
+.sheet{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sheet);margin:0 8px 8px 0;padding:24px;min-width:0}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:32px;padding:0 12px;border:1px solid var(--control);border-radius:var(--r-control);background:#fff;font-weight:500;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn:hover{border-color:#9aa19a}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-primary:hover{background:#000;border-color:#000}
+.btn-primary[disabled]{background:var(--active);border-color:var(--active);color:var(--muted);cursor:not-allowed}
+.btn-small{height:28px;padding:0 10px;font-size:13px}
+.btn-text{border:0;background:none;padding:0;height:auto;color:var(--text);text-decoration:underline;text-underline-offset:3px;font-weight:500;cursor:pointer}
+.pill{display:inline-flex;align-items:center;flex:none;height:22px;padding:0 8px;border-radius:4px;font-size:12px;font-weight:500;white-space:nowrap}
+.pill-neg{background:var(--pill-negative-bg);color:var(--pill-negative-ink)}
+.pill-warn{background:var(--pill-warning-bg);color:var(--pill-warning-ink);box-shadow:inset 0 0 0 1px var(--pill-warning-line)}
+.pill-pos{background:var(--pill-positive-bg);color:var(--pill-positive-ink)}
+.pill-neutral{background:var(--pill-neutral-bg);color:var(--pill-neutral-ink)}
+
+/* title row */
+.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:20px}
+.title-row h1{font-size:22px;line-height:28px;font-weight:600}
+.title-row .finding{margin-top:4px;font-size:14px;color:var(--muted);max-width:760px}
+.stamp{font-size:12px;color:var(--muted);white-space:nowrap}
+
+/* applications: list + detail */
+.split{display:grid;grid-template-columns:340px minmax(0,1fr);gap:var(--gap);align-items:start}
+.list{border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
+.tabs{display:flex;gap:20px;padding:0 16px;border-bottom:1px solid var(--border)}
+.tab{height:42px;border:0;background:none;padding:0;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.tab .n{margin-left:6px;font-weight:400;color:var(--muted)}
+.row{display:block;width:100%;text-align:left;border:0;background:none;padding:14px 16px;border-bottom:1px solid var(--rule);cursor:pointer}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--raised)}
+.row[aria-current="true"]{background:var(--active)}
+.row-line{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.row-addr{font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.open .row-addr{font-weight:600}
+.row-due{flex:none;font-size:13px}
+.row-due.urgent{color:var(--negative);font-weight:500}
+.row-sub{margin-top:4px;font-size:13px;color:var(--muted);align-items:center}
+.row-sub span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{flex:none;display:block;height:4px;border-radius:2px;background:var(--active);overflow:hidden}
+.track i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.row .track{width:64px}
+.empty{margin:16px;padding:10px 12px;border:1px dashed var(--control);border-radius:8px;color:var(--muted);font-size:13px}
+
+.back{display:none;margin-bottom:12px}
+.d-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+.d-head h2{font-size:16px;line-height:24px;font-weight:600;margin-top:2px}
+.d-head .meta{color:var(--muted)}
+.d-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
+.d-actions .why{font-size:12px;color:var(--muted)}
+.clock{margin-top:18px;padding:14px 16px;background:var(--raised);border-radius:var(--r-card)}
+.clock-line{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.clock-big{font-size:22px;line-height:28px;font-weight:400;white-space:nowrap;flex:none}
+.clock-big small{font-size:14px;color:var(--muted);margin-left:6px}
+.clock-big.urgent{color:var(--negative)}
+.clock .track{height:6px;border-radius:3px;margin:10px 0 8px;background:#dfe4de}
+.clock-ends{display:flex;justify-content:space-between;gap:16px;font-size:12px;color:var(--muted)}
+.clock-ends span:last-child{text-align:right}
+.verdict{margin:18px 0 6px;font-size:14px}
+.verdict b{font-weight:600}
+.d-tabs{display:flex;gap:24px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.d-body{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
+.plot{background:var(--raised);border-radius:var(--r-card);padding:12px 0 10px}
+.plot svg{display:block;margin:0 auto;max-width:100%}
+.plot figcaption{padding:6px 14px 0;font-size:12px;line-height:16px;color:var(--muted)}
+figure{margin:0}
+.facts{margin-top:16px}
+.fact{padding:9px 0;border-bottom:1px solid var(--rule)}
+.fact:last-child{border-bottom:0}
+.fact dt{font-size:12px;line-height:16px;color:var(--muted)}
+.fact dd{margin:2px 0 0}
+dl{margin:0}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:400;color:var(--muted);text-align:left;height:36px;padding:0 12px 0 0;vertical-align:middle}
+td{padding:9px 12px 9px 0;border-top:1px solid var(--rule);vertical-align:top}
+th:last-child,td:last-child{padding-right:0}
+th.num,td.num{text-align:right;white-space:nowrap}
+td .cite{display:block;font-size:12px;line-height:16px;color:var(--muted)}
+td .note{display:block;font-size:12px;line-height:16px;color:var(--muted);margin-top:2px}
+td.res{text-align:right}
+td.bad{color:var(--negative);font-weight:500}
+
+.letter{width:100%;min-height:400px;border:1px solid var(--control);border-radius:var(--r-card);padding:16px 18px;line-height:22px;resize:vertical;background:#fff}
+.letter[readonly]{background:var(--raised);border-color:var(--border)}
+.letter-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)}
+
+/* pre-check */
+.pre{display:grid;grid-template-columns:380px minmax(0,1fr);gap:var(--gap);align-items:start}
+.card{border:1px solid var(--border);border-radius:var(--r-card);padding:20px}
+.card h2{font-size:16px;line-height:24px;font-weight:600;margin-bottom:14px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.wide{grid-column:1/-1}
+.field label{font-weight:500}
+.field input,.field select{height:38px;border:1px solid var(--control);border-radius:8px;background:#fff;padding:0 12px;width:100%}
+.check{grid-column:1/-1;display:flex;gap:10px;align-items:flex-start}
+.check input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--primary)}
+.pre-out{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
+.form-foot{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+
+.seg{display:inline-flex;gap:2px;padding:2px;background:var(--raised);border-radius:8px;flex:none}
+.seg button{height:28px;padding:0 12px;border:1px solid transparent;border-radius:6px;background:none;color:var(--muted);font-weight:500;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;border-color:var(--control);color:var(--text)}
+
+/* rules */
+.rules{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--gap);align-items:start}
+.rules h2{font-size:16px;line-height:24px;font-weight:600;margin:28px 0 6px}
+.rules h2:first-child{margin-top:0}
+.rules td:first-child{width:210px;font-weight:500}
+.rules td:last-child{width:170px;color:var(--muted);white-space:nowrap}
+.src p{color:var(--muted);margin-bottom:12px}
+.src a{display:block;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;font-weight:500}
+.src a span{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.src a:hover{text-decoration:underline}
+
+/* tablet and phone */
+@media (max-width:1280px){
+  .d-body,.pre-out{grid-template-columns:1fr}
+  .d-left{display:grid;grid-template-columns:280px minmax(0,1fr);gap:var(--gap);align-items:start}
+  .facts{margin-top:0}
+}
+@media (max-width:1100px){
+  .frame{grid-template-columns:1fr}
+  .side{display:none;position:fixed;inset:48px 0 0 0;height:auto;z-index:10;background:var(--ground);padding:16px}
+  body.nav-open .side{display:flex}
+  .side .brand{display:none}
+  .top{padding:0 12px}
+  .menu-btn{display:inline-flex;width:40px;height:40px;padding:0;border:0;background:none}
+  .top-name{display:block}
+  .top-right{display:none}
+  .sheet{margin:0;border-radius:0;border-width:1px 0 0;padding:20px 16px 32px}
+  .nav a{height:44px}
+  .rules{grid-template-columns:1fr}
+  .pre{grid-template-columns:1fr}
+}
+@media (max-width:1000px){
+  .split{grid-template-columns:1fr}
+  .split .detail{display:none}
+  .split.show-detail .list{display:none}
+  .split.show-detail .detail{display:block}
+  .back{display:inline-flex}
+  .row{padding:16px}
+}
+@media (max-width:640px){
+  .search{display:none}
+  .side-search{display:block;position:relative}
+  .side-search svg{position:absolute;left:11px;top:13px;color:var(--muted)}
+  .side-search input{height:40px}
+  .title-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .title-row h1{font-size:20px}
+  .d-head{flex-direction:column;gap:14px}
+  .d-actions{align-items:stretch;width:100%}
+  .d-actions .btn{height:44px}
+  .d-left{grid-template-columns:1fr}
+  .facts{margin-top:16px}
+  .clock-ends{flex-direction:column;gap:2px}
+  .clock-ends span:last-child{text-align:left}
+  .d-tabs{gap:18px;overflow-x:auto}
+  .fields{grid-template-columns:1fr}
+  .field input,.field select{height:44px}
+  .form-foot{flex-direction:column;align-items:stretch}
+  .form-foot .btn{height:44px}
+  .seg button{height:40px;padding:0 16px}
+  .letter-foot{flex-direction:column;align-items:stretch}
+  .letter-foot .btn{height:44px}
+  table.stack thead{display:none}
+  table.stack tr{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--rule)}
+  table.stack td{border:0;padding:0;text-align:left}
+  table.stack td.res{grid-row:1;grid-column:2;text-align:right}
+  table.stack td.num{grid-column:1/-1;font-size:13px;color:var(--muted);white-space:normal}
+  table.stack td.num::before{content:attr(data-h) ": "}
+  table.stack td.name{grid-column:1}
+  .rules td:first-child,.rules td:last-child{width:auto;white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <aside class="side" id="side">
+    <a class="brand" href="#/applications" aria-label="ADU Permit AI, applications">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 11.5 10 5l7.5 6.5V20h-15z" stroke="#131416" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 20v-5.2l4.5-3.6 4 3.6V20z" fill="#1b6c80"/></svg>
+      ADU Permit AI
+    </a>
+    <p class="scope"><b>City of Greenfield</b>Planning Department</p>
+    <div class="side-search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="4.4" stroke="currentColor" stroke-width="1.5"/><path d="m9.4 9.4 3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><input type="search" aria-label="Search applications" placeholder="Search address, applicant or number" data-search></div>
+    <nav class="nav" aria-label="Main">
+      <a href="#/applications" data-nav="applications"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Applications<span class="count" id="nav-count"></span></a>
+      <a href="#/rules" data-nav="rules"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 2.5h8a2 2 0 0 1 2 2v9H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 6h4M6 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Rules</a>
+      <p class="nav-label">What the applicant sees</p>
+      <a href="#/precheck" data-nav="precheck"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8.2 8 3l6 5.2V14H2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m5.6 9.6 1.7 1.7 3.2-3.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Pre-check</a>
+    </nav>
+    <div class="side-foot">
+      Demo with sample applications. The rules are Greenfield Municipal Code Chapter 17.90 and Gov. Code § 66317.
+      <br><button class="btn-text" id="reset" type="button">Reset the demo</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <button class="menu-btn" id="menu" type="button" aria-label="Open menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <span class="top-name">ADU Permit AI</span>
+      <div class="search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="6" cy="6" r="4.4" stroke="currentColor" stroke-width="1.5"/><path d="m9.4 9.4 3.2 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><input type="search" aria-label="Search applications" placeholder="Search address, applicant or number" data-search></div>
+      <span class="top-right">Sample data as of <span id="today"></span></span>
+    </header>
+    <main class="sheet" id="view"></main>
+  </div>
+</div>
+
+<script>
+/* ---------- dates ---------- */
+const D = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const TODAY = D('2026-11-13');                       // the demo's "today", fixed so it replays the same
+const HOLIDAYS = ['2026-11-11','2026-11-26','2026-11-27','2026-12-25','2027-01-01'];   // sample city calendar
+const key = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const daysBetween = (a,b) => Math.round((b-a)/864e5);
+const isBiz = d => d.getDay()!==0 && d.getDay()!==6 && !HOLIDAYS.includes(key(d));
+const addBiz = (d,n) => { let x = new Date(d); while(n>0){ x = addDays(x,1); if(isBiz(x)) n--; } return x; };
+const bizBetween = (a,b) => { let c=0, x=new Date(a); while(x<b){ x=addDays(x,1); if(isBiz(x)) c++; } return c; };
+const short = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const long = d => d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+const n = x => Number(x).toLocaleString('en-US');
+const plural = (c,w) => `${c} ${w}${c===1?'':'s'}`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Spanish for the applicant's Pre-check (draft translation: have a fluent reader confirm the legal terms) ---------- */
+let LANG = 'en';
+const ES = {
+ 'Pre-check':'Revisión previa','Your ADU':'Su ADU','Property address':'Dirección de la propiedad','Type of unit':'Tipo de unidad','Bedrooms':'Recámaras','Studio':'Estudio','2 or more':'2 o más',
+ 'Floor area, sq ft':'Superficie, pies²','Height, ft':'Altura, pies','Main house, sq ft':'Casa principal, pies²','Side setback, ft':'Retiro lateral, pies','Rear setback, ft':'Retiro posterior, pies',
+ 'Distance to the house, ft':'Distancia a la casa, pies','Parking spaces for the unit':'Espacios de estacionamiento para la unidad',
+ 'The lot is within half a mile walking distance of a bus stop':'El lote está a menos de media milla a pie de una parada de autobús',
+ 'Free to try. Nothing is filed until you submit.':'Pruébelo sin costo. No se presenta nada hasta que envíe la solicitud.','Submit application':'Enviar solicitud',
+ 'Standard':'Norma','Plans show':'Su diseño','Code requires':'El código exige','Result':'Resultado','Not met':'No cumple','Meets':'Cumple','Planner reviews':'Lo revisa la ciudad','Confirmed':'Confirmado',
+ 'Unit size':'Tamaño de la unidad','Minimum size':'Tamaño mínimo','Side setback':'Retiro lateral','Rear setback':'Retiro posterior','Distance to house':'Distancia a la casa','Height':'Altura','Parking':'Estacionamiento',
+ 'Separate entrance':'Entrada independiente','Water and sewer':'Agua y drenaje','Design match':'Diseño acorde a la casa','Within the house':'Dentro de la casa','Efficiency kitchen':'Cocina básica','Owner occupancy':'Propietario residente',
+ 'On the plans':'En los planos','Elevations':'Elevaciones','match':'acorde','required':'se requiere','public':'público','Public':'Público','existing':'existente','none':'ninguno','zone limit':'límite de zona',
+ 'Shown':'Indicado','Not shown':'No indicado','Yes':'Sí','Declared':'Declarado','Not declared':'No declarado',
+ 'Existing structure keeps its setback (F.4)':'La estructura existente conserva su retiro (F.4)','Compare with the zoning district height limit':'Se compara con el límite de altura de la zona',
+ 'R-E district limit (Table 17.30-1)':'Límite del distrito R-E (Tabla 17.30-1)','R-L district limit (Table 17.30-2)':'Límite del distrito R-L (Tabla 17.30-2)',
+ 'R-M district limit (Table 17.30-3)':'Límite del distrito R-M (Tabla 17.30-3)','R-H district limit (Table 17.30-4)':'Límite del distrito R-H (Tabla 17.30-4)',
+ 'None required: studio':'No se requiere: estudio','None required: garage conversion':'No se requiere: conversión de garaje','None required: near a transit stop':'No se requiere: cerca de una parada de transporte',
+ 'A planner compares the elevations with the house':'Un planificador compara las elevaciones con la casa',
+ 'House':'Casa','Rear':'Posterior','Side':'Lado','Street':'Calle',
+ 'Drawn from the plan dimensions on a 60 by 110 ft lot. Not a survey.':'Dibujado con las medidas del plano en un lote de 60 por 110 pies. No es un levantamiento topográfico.',
+ 'Impact fees':'Cuotas de impacto','None: under 750 sq ft':'Ninguna: menos de 750 pies²','In proportion to the house':'En proporción a la casa','Utility connection':'Conexión de servicios',
+ 'Separate connections required':'Se requieren conexiones separadas','No separate connection required':'No se requiere conexión separada','Rental term':'Plazo de renta','30 consecutive days or longer':'30 días consecutivos o más',
+};
+const KIND_ES = {detached:'ADU independiente, construcción nueva', attached:'ADU adosada', conversion:'ADU por conversión de garaje', jadu:'ADU júnior (JADU)'};
+const t = s => (LANG==='es' && ES[s]) || s;
+const sqft = () => LANG==='es' ? 'pies²' : 'sq ft', ft = () => LANG==='es' ? 'pies' : 'ft';
+const tv = s => { if(LANG!=='es' || s==null) return s; if(ES[s]) return ES[s];
+  return String(s).replace(/^max /,'máx. ').replace(/^min /,'mín. ').replace(/sq ft/g,'pies²').replace(/ ft\b/g,' pies').replace(/\bspaces\b/,'espacios').replace(/\bspace\b/,'espacio'); };
+
+/* ---------- sample applications (replace with real ones) ---------- */
+const SEED = [
+ {id:'ADU-2026-027', applicant:'Marisol Ortega', address:'418 Walnut Avenue', street:'Walnut Avenue', kind:'detached', bedrooms:2, area:960, height:15.5, side:4, rear:3, separation:8, primaryArea:1640, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+  submitted:'2026-09-24', completeOn:'2026-09-24', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-07-30',utility:true}},
+ {id:'ADU-2026-034', applicant:'Teresa Villanueva', address:'1207 Apple Avenue', street:'Apple Avenue', kind:'jadu', bedrooms:1, area:480, primaryArea:1750, withinWalls:true, kitchen:true, ownerOcc:true, entrance:true,
+  submitted:'2026-11-02', completeOn:null, stage:'intake', docs:{form:true,fee:true,plans:true,title:'2026-09-18',utility:true,deed:false}},
+ {id:'ADU-2026-036', applicant:'Robert Kessler', address:'540 Oak Avenue', street:'Oak Avenue', kind:'detached', bedrooms:1, area:748, height:17, side:5, rear:5, separation:12, primaryArea:1480, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+  submitted:'2026-11-09', completeOn:null, stage:'intake', docs:{form:true,fee:true,plans:true,title:'2026-03-30',utility:true}},
+ {id:'ADU-2026-031', applicant:'Daniel Reyes', address:'233 Elm Avenue', street:'Elm Avenue', kind:'conversion', bedrooms:0, area:420, side:2, rear:3, separation:10, primaryArea:1320, parking:0, transitStop:false, entrance:true, utilities:true,
+  submitted:'2026-10-09', completeOn:'2026-10-09', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-08-21',utility:true}},
+ {id:'ADU-2026-029', applicant:'Huong Tran', address:'96 Tenth Street', street:'Tenth Street', kind:'attached', zone:'R-L', bedrooms:1, area:880, height:14, side:5, rear:22, separation:0, primaryArea:1900, parking:1, transitStop:true, entrance:true, utilities:true,
+  submitted:'2026-10-20', completeOn:'2026-10-20', stage:'review', docs:{form:true,fee:true,plans:true,title:'2026-09-02',utility:true}},
+ {id:'ADU-2026-022', applicant:'Guadalupe Mendoza', address:'62 Palm Avenue', street:'Palm Avenue', kind:'detached', bedrooms:2, area:1000, height:16, side:3.5, rear:4, separation:9, primaryArea:1560, parking:1, transitStop:false, majorTransit:false, entrance:true, utilities:true,
+  submitted:'2026-09-14', completeOn:'2026-09-14', stage:'waiting', sentOn:'2026-10-28', sentKind:'comments', docs:{form:true,fee:true,plans:true,title:'2026-06-11',utility:true}},
+ {id:'ADU-2026-019', applicant:'Anh Pham', address:'310 Thirteenth Street', street:'Thirteenth Street', kind:'conversion', bedrooms:1, area:510, side:4, rear:5, separation:7, primaryArea:1410, parking:0, transitStop:false, entrance:true, utilities:true,
+  submitted:'2026-10-02', completeOn:'2026-10-02', stage:'approved', decidedOn:'2026-11-05', confirmed:{design:true}, docs:{form:true,fee:true,plans:true,title:'2026-07-08',utility:true}},
+];
+let APPS = JSON.parse(JSON.stringify(SEED));
+const KIND = {detached:'Detached ADU, new construction', attached:'Attached ADU', conversion:'Garage conversion ADU', jadu:'Junior ADU (JADU)'};
+const BEDS = b => b===0 ? 'studio' : b===1 ? '1 bedroom' : '2 bedrooms';
+
+/* ---------- the rules: Greenfield Municipal Code Ch. 17.90 (Ord. 574, 2025) ---------- */
+const tri = (v, okText, badText) => v===true ? {status:'pass', found:okText} : v===false ? {status:'fail', found:badText} : {status:'staff', found:'On the plans'};
+const RULES = [
+ {id:'size', group:'adu', label:'Unit size', cite:'§ 17.90.020D',
+  text:'No more than 850 sq ft with one bedroom or less, or 1,000 sq ft with more than one bedroom. An attached ADU may not exceed 50% of the primary dwelling, except as needed to allow 800 sq ft.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>{ const cap=a.bedrooms>1?1000:850; const lim=a.kind==='attached'?Math.min(cap,Math.max(800,a.primaryArea*0.5)):cap;
+    return {status:a.area<=lim?'pass':'fail', found:`${n(a.area)} sq ft`, required:`max ${n(lim)} sq ft`,
+      fix:`Reduce the floor area to ${n(lim)} sq ft or less. The plans show ${n(a.area)} sq ft for a unit with ${BEDS(a.bedrooms)}.`}; }},
+ {id:'minsize', group:'adu', label:'Minimum size', cite:'§ 17.90.020E',
+  text:'At least 150 sq ft, or the size of an efficiency unit under Health and Safety Code § 17958.1, whichever is greater.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>({status:a.area>=150?'pass':'fail', found:`${n(a.area)} sq ft`, required:'min 150 sq ft', fix:'Increase the floor area to at least 150 sq ft.'})},
+ {id:'side', group:'adu', label:'Side setback', cite:'§ 17.90.020F.2',
+  text:'At least 4 ft from the side property line. An existing legal nonconforming structure keeps its setback (F.4).',
+  applies:a=>a.kind!=='jadu',
+  check:a=> a.kind==='conversion' ? {status:'pass', found:`${a.side} ft`, required:'existing', note:'Existing structure keeps its setback (F.4)'}
+    : {status:a.side>=4?'pass':'fail', found:`${a.side} ft`, required:'min 4 ft',
+       fix:`Move or narrow the unit so it sits at least 4 ft from the side property line. The site plan shows ${a.side} ft.`}},
+ {id:'rear', group:'adu', label:'Rear setback', cite:'§ 17.90.020F.3',
+  text:'At least 4 ft from the rear property line. An existing legal nonconforming structure keeps its setback (F.4).',
+  applies:a=>a.kind!=='jadu',
+  check:a=> a.kind==='conversion' ? {status:'pass', found:`${a.rear} ft`, required:'existing', note:'Existing structure keeps its setback (F.4)'}
+    : {status:a.rear>=4?'pass':'fail', found:`${a.rear} ft`, required:'min 4 ft',
+       fix:`Move or shorten the unit so it sits at least 4 ft from the rear property line. The site plan shows ${a.rear} ft.`}},
+ {id:'sep', group:'adu', label:'Distance to house', cite:'§ 17.90.020F.5',
+  text:'A detached accessory structure sits at least 6 ft from the primary dwelling.',
+  applies:a=>a.kind==='detached',
+  check:a=>({status:a.separation>=6?'pass':'fail', found:`${a.separation} ft`, required:'min 6 ft',
+    fix:`Leave at least 6 ft between the unit and the primary dwelling. The site plan shows ${a.separation} ft.`})},
+ {id:'height', group:'adu', label:'Height', cite:'§ 17.90.020H',
+  text:'A detached ADU is no taller than 16 ft, or 18 ft within one-half mile walking distance of a major transit stop or high-quality transit corridor. An attached ADU follows the height limit of its zoning district: 35 ft in R-E, R-L and R-M, and 45 ft or three stories in R-H (Chapter 17.30).',
+  applies:a=>a.kind==='detached'||a.kind==='attached',
+  check:a=>{ if(a.kind==='attached'){ const z = ZONES[a.zone];
+      if(!z) return {status:'staff', found:`${a.height} ft`, required:'zone limit', note:'Compare with the zoning district height limit'};
+      return {status:a.height<=z.height?'pass':'fail', found:`${a.height} ft`, required:`max ${z.height} ft`, note:`${a.zone} district limit (${z.table})`,
+        fix:`Lower the unit to ${z.height} ft or less, the height limit of the ${a.zone} district. The elevations show ${a.height} ft.`}; }
+    const lim=a.majorTransit?18:16; return {status:a.height<=lim?'pass':'fail', found:`${a.height} ft`, required:`max ${lim} ft`,
+      fix:`Lower the unit to ${lim} ft or less. The elevations show ${a.height} ft.`}; }},
+ {id:'parking', group:'adu', label:'Parking', cite:'§ 17.90.020I',
+  text:'One off-street space per unit. None for a studio, a garage conversion, a unit within the primary dwelling, or a unit within one-half mile walking distance of a public transit stop.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>{ const why=a.bedrooms===0?'studio':a.kind==='conversion'?'garage conversion':a.transitStop?'near a transit stop':null;
+    if(why) return {status:'pass', found:plural(a.parking,'space'), required:'none', note:`None required: ${why}`};
+    return {status:a.parking>=1?'pass':'fail', found:plural(a.parking,'space'), required:'1 space',
+      fix:'Show one off-street parking space for the unit on the site plan. It may be compact, uncovered or tandem.'}; }},
+ {id:'entrance', group:'adu', label:'Separate entrance', cite:'§ 17.90.020J',
+  text:'An entrance separate from the main entrance of the primary dwelling.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>({...tri(a.entrance,'Shown','Not shown'), required:'required', fix:'Show an entrance to the unit that is separate from the main entrance of the primary dwelling.'})},
+ {id:'utilities', group:'adu', label:'Water and sewer', cite:'§ 17.90.020K',
+  text:'Served by public water and sewer, with access to an improved public street.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>({...tri(a.utilities,'Public','Not shown'), required:'public', fix:'Show the public water and sewer service for the unit.'})},
+ {id:'design', group:'adu', label:'Design match', cite:'§ 17.90.020L',
+  text:'A unit visible from the street has the same architectural style, detail, color and materials as the primary dwelling. Other detached units match its color and materials.',
+  applies:a=>a.kind!=='jadu',
+  check:a=>({status:'staff', found:'Elevations', required:'match', note:'A planner compares the elevations with the house'})},
+ {id:'jsize', group:'jadu', label:'Unit size', cite:'§ 17.90.030D',
+  text:'No more than 500 sq ft, not counting a shared bathroom in the primary dwelling.',
+  applies:a=>a.kind==='jadu',
+  check:a=>({status:a.area<=500?'pass':'fail', found:`${n(a.area)} sq ft`, required:'max 500 sq ft', fix:`Reduce the junior ADU to 500 sq ft or less. The plans show ${n(a.area)} sq ft.`})},
+ {id:'jwalls', group:'jadu', label:'Within the house', cite:'§ 17.90.030B',
+  text:'Entirely within the walls of the single-family residence, attached garage included. Up to 150 sq ft may be added for ingress and egress.',
+  applies:a=>a.kind==='jadu',
+  check:a=>({...tri(a.withinWalls,'Yes','No'), required:'required', fix:'Keep the junior ADU within the walls of the existing residence.'})},
+ {id:'jentrance', group:'jadu', label:'Separate entrance', cite:'§ 17.90.030G',
+  text:'A separate exterior entrance. With a shared bathroom, the unit also opens to the main living area.',
+  applies:a=>a.kind==='jadu',
+  check:a=>({...tri(a.entrance,'Shown','Not shown'), required:'required', fix:'Show a separate exterior entrance to the junior ADU.'})},
+ {id:'jkitchen', group:'jadu', label:'Efficiency kitchen', cite:'§ 17.90.030I',
+  text:'Cooking appliances, a food preparation counter and storage cabinets sized to the unit.',
+  applies:a=>a.kind==='jadu',
+  check:a=>({...tri(a.kitchen,'Shown','Not shown'), required:'required', fix:'Show an efficiency kitchen on the floor plan.'})},
+ {id:'jowner', group:'jadu', label:'Owner occupancy', cite:'§ 17.90.030J.1',
+  text:'The owner lives in the primary dwelling or in the junior ADU.',
+  applies:a=>a.kind==='jadu',
+  check:a=>({...tri(a.ownerOcc,'Declared','Not declared'), required:'required', fix:'Sign the owner-occupancy declaration on the application form.'})},
+];
+// Height limits for primary structures, Greenfield Municipal Code Ch. 17.30 (Tables 17.30-1 to 17.30-4)
+const ZONES = {'R-E':{height:35, table:'Table 17.30-1'}, 'R-L':{height:35, table:'Table 17.30-2'}, 'R-M':{height:35, table:'Table 17.30-3'}, 'R-H':{height:45, table:'Table 17.30-4'}};
+const DOCS = [
+ {id:'form', label:'Application form', cite:'§ 17.90.040A', text:'On the city\'s form, with everything the form prescribes.', fix:'Complete and sign the city\'s ADU application form.'},
+ {id:'fee', label:'Filing fee', cite:'§ 17.90.040B.1', text:'Paid when the application is filed, in the amount set by City Council resolution.', fix:'Pay the application filing fee at the Planning counter.'},
+ {id:'plans', label:'Plan set', cite:'§ 17.90.040A', text:'Site plan, floor plan and elevations, as the form prescribes.', fix:'Submit a site plan, a floor plan and elevations.'},
+ {id:'title', label:'Preliminary title report', cite:'§ 17.90.040C', text:'Dated within six months of the submittal date, with a digital copy of every referenced document.', fix:'Order a preliminary title report from a title company and submit it with all referenced documents.'},
+ {id:'utility', label:'Utility and service information', cite:'§ 17.90.040D', text:'Available utility easements, services and connections.', fix:'Provide the utility easements, services and connections available to the lot.'},
+ {id:'deed', label:'JADU deed restriction', cite:'§ 17.90.040E', jadu:true, text:'Filed with the application and recorded with the Monterey County Recorder. It bars a separate sale and rentals under 30 days.', fix:'File the junior ADU deed restriction with this application. The city records it with the Monterey County Recorder.'},
+];
+const STATE_RULES = [
+ {label:'Completeness', text:'The city tells the applicant in writing whether the application is complete within 15 business days. With no timely answer, the application is deemed complete.', cite:'Gov. Code § 66317(a)(2)'},
+ {label:'Incomplete notice', text:'An incomplete notice lists every missing item and says how to complete it.', cite:'Gov. Code § 66317(a)(2)(B)'},
+ {label:'Decision', text:'The city approves or denies a completed application within 60 days. With no decision, the application is deemed approved.', cite:'Gov. Code § 66317(a)'},
+ {label:'Denial', text:'A denial returns a full set of comments within the same 60 days: each defective item and how to remedy it.', cite:'Gov. Code § 66317(b)'},
+ {label:'Ministerial approval', text:'An application that fully complies gets a ministerial, nondiscretionary permit. An applicant may ask for the Planning Director\'s discretionary review instead.', cite:'§ 17.90.050'},
+];
+
+/* ---------- the check ---------- */
+function evaluate(a){
+  const submitted = a.submitted || key(TODAY), have = a.docs || {};
+  const sixBefore = (()=>{ const x = D(submitted); x.setMonth(x.getMonth()-6); return x; })();
+  const checks = RULES.filter(r=>r.applies(a)).map(r=>{ const c = r.check(a);
+    if(c.status==='staff' && a.confirmed && a.confirmed[r.id]) { c.status='pass'; c.note='Confirmed by a planner'; c.confirmed=true; }
+    return {rule:r, ...c}; });
+  const docs = DOCS.filter(d=>!d.jadu || a.kind==='jadu').map(d=>{
+    const v = have[d.id];
+    if(d.id==='title' && typeof v==='string'){
+      const stale = D(v) < sixBefore;
+      return {doc:d, status:stale?'stale':'ok', note:`Dated ${long(D(v))}`+(stale?`. It must be dated on or after ${long(sixBefore)}.`:''),
+        fix:`The report is dated ${long(D(v))}, more than six months before your ${long(D(submitted))} submittal. Submit a report dated on or after ${long(sixBefore)}.`};
+    }
+    return {doc:d, status:v?'ok':'missing', fix:d.fix};
+  });
+  const order = {fail:0, staff:1, pass:2};
+  checks.sort((x,y)=>order[x.status]-order[y.status]);
+  return {checks, docs, fails:checks.filter(c=>c.status==='fail'), staff:checks.filter(c=>c.status==='staff'),
+          missing:docs.filter(d=>d.status!=='ok'), measured:checks.filter(c=>c.status!=='staff'||c.confirmed)};
+}
+function deadline(a){
+  if(a.stage==='intake'){ const due = addBiz(D(a.submitted),15), left = bizBetween(TODAY,due);
+    return {due, left, total:15, done:15-left, unit:'business day', label:'Completeness answer due', urgent:left<=3,
+      from:`Submitted ${short(D(a.submitted))}`, after:`Deemed complete if unanswered after ${short(due)}`}; }
+  if(a.stage==='review'){ const due = addDays(D(a.completeOn),60), left = daysBetween(TODAY,due);
+    return {due, left, total:60, done:60-left, unit:'day', label:'Decision due', urgent:left<=14,
+      from:`Complete application received ${short(D(a.completeOn))}`, after:`Deemed approved if undecided after ${short(due)}`}; }
+  return null;
+}
+function nextAction(a, ev){
+  if(a.stage==='intake') return ev.missing.length ? {kind:'notice', label:'Review incomplete notice'} : {kind:'accept', label:'Accept as complete'};
+  if(a.stage==='review'){
+    if(ev.fails.length) return {kind:'comments', label:'Review comment letter'};
+    return {kind:'approve', label:'Approve permit', blocked: ev.staff.length ? `Confirm ${plural(ev.staff.length,'item')} first` : null};
+  }
+  return null;
+}
+function statusLine(a, ev){
+  if(a.stage==='intake') return ev.missing.length ? `Completeness · ${plural(ev.missing.length,'document')} to fix` : 'Completeness · all documents in';
+  if(a.stage==='review') return ev.fails.length ? `Code review · ${plural(ev.fails.length,'standard')} not met` : ev.staff.length ? `Code review · ${ev.staff.length} to confirm` : 'Code review · ready to approve';
+  if(a.stage==='waiting') return `Waiting on applicant · sent ${short(D(a.sentOn))}`;
+  return `Approved ${short(D(a.decidedOn))}`;
+}
+function letterFor(a, ev, kind){
+  const what = KIND[a.kind].toLowerCase().replace('adu','ADU').replace('(jadu)','(JADU)');
+  const head = `${long(TODAY)}\n\n${a.applicant}\n${a.address}\nGreenfield, CA 93927\n\nRe: ${a.id}, ${what} at ${a.address}\n\nDear ${a.applicant},\n\n`;
+  const item = (i, title, cite, fix) => `${i}. ${title} (${cite}). ${fix}\n`;
+  let body = '';
+  if(kind==='notice'){
+    body += `Thank you for your application, received ${long(D(a.submitted))}. It is not yet complete. Here is what is missing and how to complete it:\n\n`;
+    ev.missing.forEach((m,i)=> body += item(i+1, m.doc.label, 'Greenfield Municipal Code '+m.doc.cite, m.fix));
+    if(ev.fails.length){
+      body += `\nSo you can fix everything in one round, we also checked the design. These items do not meet the code as drawn:\n\n`;
+      ev.fails.forEach((c,i)=> body += item(i+1, c.rule.label, c.rule.cite, c.fix));
+    }
+    body += `\nOnce we receive the items above, the city has 60 days to approve or deny the completed application.\n`;
+  } else {
+    body += `The Planning Department reviewed your application against Greenfield Municipal Code Chapter 17.90. It cannot be approved as drawn. Each item below must be corrected:\n\n`;
+    ev.fails.forEach((c,i)=> body += item(i+1, c.rule.label, c.rule.cite, c.fix));
+    const ok = ev.checks.filter(c=>c.status==='pass').length;
+    body += `\nThe other ${plural(ok,'standard')} we measured ${ok===1?'meets':'meet'} the code. Resubmit the corrected sheets and we will review them against this list.\n\nIf you prefer to keep the design as drawn, you may apply for discretionary review by the Planning Director (§ 17.90.050B).\n`;
+  }
+  return head + body + `\nPlanning Department\nCity of Greenfield`;
+}
+
+/* ---------- lot diagram: drawn from the application's own numbers ---------- */
+function lotDiagram(a){
+  const lot = {w:60, d:110}, s = 2.5, L = LANG==='es' ? (a.kind==='conversion' ? 50 : 72) : 62, T = 26, W = 280, H = T + lot.d*s + 30;
+  const X = f => L + f*s, Y = f => T + f*s;
+  const ev = evaluate(a), bad = id => ev.fails.some(c=>c.rule.id===id);
+  const hw = 50, hd = a.primaryArea/hw, hx = 5;
+  let adu, hy, parts = '', dims = '';
+  const dim = (x1,y1,x2,y2,label,lx,ly,anchor,isBad) => {
+    const c = isBad ? 'var(--negative)' : 'var(--muted)';
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${isBad?1.5:1}"/><text x="${lx}" y="${ly}" text-anchor="${anchor}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${label}</text>`;
+  };
+  if(a.kind==='jadu'){
+    hy = lot.d - 22 - hd; const jw = 22, jd = a.area/jw;
+    adu = {x:hx, y:hy+hd-jd, w:jw, d:jd, label:'JADU'};
+  } else if(a.kind==='conversion'){
+    const gw = 20, gd = a.area/gw; adu = {x:lot.w-a.side-gw, y:a.rear, w:gw, d:gd, label:'ADU'};
+    hy = adu.y + gd + a.separation;
+  } else {
+    const aw = Math.min(lot.w - a.side - 6, Math.round(Math.sqrt(a.area*1.4))), ad = a.area/aw;
+    adu = {x:a.side, y:a.rear, w:aw, d:ad, label:'ADU'};
+    hy = adu.y + ad + (a.kind==='attached' ? 0 : a.separation);
+  }
+  hy = Math.min(hy, lot.d - hd - 4);
+  // the 4 ft envelope for new construction
+  if(a.kind==='detached'||a.kind==='attached')
+    parts += `<path d="M${X(4)} ${Y(lot.d)}V${Y(4)}H${X(lot.w-4)}V${Y(lot.d)}" fill="none" stroke="var(--control)" stroke-dasharray="3 3"/>`;
+  parts += `<rect x="${X(hx)}" y="${Y(hy)}" width="${hw*s}" height="${hd*s}" fill="#dfe4de"/>`;
+  parts += `<text x="${X(hx+hw/2)}" y="${Y(hy+hd/2)+ (a.kind==='jadu'?-14:4)}" text-anchor="middle" font-size="11" fill="var(--muted)">${t('House')} ${n(a.primaryArea)} ${sqft()}</text>`;
+  parts += `<rect x="${X(adu.x)}" y="${Y(adu.y)}" width="${adu.w*s}" height="${adu.d*s}" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.5"/>`;
+  parts += `<text x="${X(adu.x+adu.w/2)}" y="${Y(adu.y+adu.d/2)-2}" text-anchor="middle" font-size="12" font-weight="500" fill="var(--text)">${adu.label}</text>`;
+  parts += `<text x="${X(adu.x+adu.w/2)}" y="${Y(adu.y+adu.d/2)+12}" text-anchor="middle" font-size="11" fill="var(--text)">${n(a.area)} ${sqft()}</text>`;
+  if(a.kind!=='jadu'){
+    const cx = X(adu.x+adu.w/2), cy = Y(adu.y+adu.d/2);
+    dims += dim(cx, Y(0), cx, Y(adu.y), `${t('Rear')} ${a.rear} ${ft()}`, cx, T-8, 'middle', bad('rear'));
+    if(a.kind==='conversion') dims += dim(X(adu.x+adu.w), cy, X(lot.w), cy, `${t('Side')} ${a.side} ${ft()}`, X(lot.w)+6, cy+4, 'start', bad('side'));
+    else dims += dim(X(0), cy, X(adu.x), cy, `${t('Side')} ${a.side} ${ft()}`, L-6, cy+4, 'end', bad('side'));
+    if(a.kind!=='attached'){ const gx = X(adu.x+adu.w/2), gy1 = Y(adu.y+adu.d), gy2 = Y(hy);
+      dims += dim(gx, gy1, gx, gy2, (LANG==='es' ? `${a.separation} pies a la casa` : `${a.separation} ft to house`), gx+6, (gy1+gy2)/2+4, 'start', bad('sep')); }
+    if(a.height!=null && a.kind!=='conversion'){ const isBad = bad('height'), c = isBad?'var(--negative)':'var(--muted)';
+      dims += `<text x="${X(lot.w)+6}" y="${Y(adu.y)+12}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${t('Height')}</text><text x="${X(lot.w)+6}" y="${Y(adu.y)+26}" font-size="11" fill="${c}" font-weight="${isBad?500:400}">${a.height} ${ft()}</text>`; }
+  }
+  const label = `Lot diagram for ${a.address||'this design'}: ${adu.label} of ${n(a.area)} square feet` + (a.kind!=='jadu' ? `, rear setback ${a.rear} feet, side setback ${a.side} feet` : ' inside the house');
+  return `<figure class="plot"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" font-family="IBM Plex Sans, sans-serif">
+    <rect x="${X(0)}" y="${Y(0)}" width="${lot.w*s}" height="${lot.d*s}" fill="#fff" stroke="var(--control)"/>
+    ${parts}${dims}
+    <text x="${X(lot.w/2)}" y="${Y(lot.d)+18}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(a.street||t('Street'))}</text>
+  </svg><figcaption>${t('Drawn from the plan dimensions on a 60 by 110 ft lot. Not a survey.')}</figcaption></figure>`;
+}
+function facts(a){
+  const pct = (a.area/a.primaryArea*100).toFixed(1);
+  const rows = [
+    [t('Impact fees'), a.area<750 ? t('None: under 750 sq ft') : `${t('In proportion to the house')}: ${n(a.area)} ÷ ${n(a.primaryArea)} ${sqft()} = ${pct}%`, '§ 17.90.040B.2'],
+    [t('Utility connection'), t(a.kind==='detached'||a.kind==='attached' ? 'Separate connections required' : 'No separate connection required'), '§ 17.90.020K'],
+    [t('Rental term'), t('30 consecutive days or longer'), '§ 17.90.060B'],
+  ];
+  return `<dl class="facts">${rows.map(r=>`<div class="fact"><dt>${r[0]} · ${r[2]}</dt><dd>${r[1]}</dd></div>`).join('')}</dl>`;
+}
+function checksTable(ev, mode){
+  const res = c => {
+    if(c.status==='fail') return `<span class="pill pill-neg">${t('Not met')}</span>`;
+    if(c.status==='staff') return mode==='staff' ? `<button class="btn btn-small" type="button" data-confirm="${c.rule.id}">Confirm</button>` : `<span class="muted">${t('Planner reviews')}</span>`;
+    return `<span class="muted">${t(c.confirmed?'Confirmed':'Meets')}</span>`;
+  };
+  return `<table class="stack"><thead><tr><th>${t('Standard')}</th><th class="num">${t('Plans show')}</th><th class="num">${t('Code requires')}</th><th class="num">${t('Result')}</th></tr></thead><tbody>
+  ${ev.checks.map(c=>`<tr><td class="name">${t(c.rule.label)}<span class="cite">${c.rule.cite}${c.note?' · '+t(c.note):''}</span></td>
+    <td class="num${c.status==='fail'?' bad':''}" data-h="${t('Plans show')}">${tv(c.found)}</td><td class="num" data-h="${t('Code requires')}">${tv(c.required)}</td><td class="res">${res(c)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+/* ---------- state ---------- */
+const ui = {tab:'open', selected:null, dtab:null, query:'', letters:{}, showDetail:false, lang:'en'};
+const pre = {id:null, zone:'R-L', applicant:'Elena Marquez', address:'129 Pine Avenue', street:'Pine Avenue', kind:'detached', bedrooms:2, area:1050, height:15, side:4, rear:4, separation:5, primaryArea:1500, parking:1, transitStop:false, majorTransit:false};
+const view = document.getElementById('view');
+const inTab = a => ui.tab==='open' ? (a.stage==='intake'||a.stage==='review') : ui.tab==='waiting' ? a.stage==='waiting' : a.stage==='approved';
+const dueTime = a => { const d = deadline(a); return d ? d.due.getTime() : Infinity; };
+const sorted = () => [...APPS].sort((x,y)=>dueTime(x)-dueTime(y) || x.id.localeCompare(y.id));
+const matches = a => !ui.query || (a.address+' '+a.applicant+' '+a.id).toLowerCase().includes(ui.query.toLowerCase());
+
+/* ---------- applications ---------- */
+function renderApplications(){
+  const all = sorted(), counts = {open:all.filter(a=>a.stage==='intake'||a.stage==='review').length, waiting:all.filter(a=>a.stage==='waiting').length, decided:all.filter(a=>a.stage==='approved').length};
+  console.assert(counts.open+counts.waiting+counts.decided===APPS.length, 'tab counts must add up to every application');
+  document.getElementById('nav-count').textContent = counts.open || '';
+  const rows = all.filter(inTab).filter(matches);
+  if(!rows.some(a=>a.id===ui.selected)){ ui.selected = rows[0] ? rows[0].id : null; ui.dtab = null; }
+  const first = all.find(a=>a.stage==='intake'||a.stage==='review');
+  let finding = 'Nothing is waiting on the city.';
+  if(first){ const d = deadline(first), ev = evaluate(first);
+    finding = `${first.address} runs out first: ${d.label.toLowerCase()} ${short(d.due)}, ${plural(d.left,d.unit)} left. ${statusLine(first,ev).split(' · ')[1].replace(/^./,c=>c.toUpperCase())}.`; }
+  const tab = (id,label) => `<button class="tab" role="tab" type="button" aria-selected="${ui.tab===id}" data-tab="${id}">${label}<span class="n">${counts[id]}</span></button>`;
+  const list = rows.length ? rows.map(a=>{ const ev = evaluate(a), d = deadline(a);
+    return `<button class="row${d?' open':''}" type="button" data-app="${a.id}" aria-current="${a.id===ui.selected}">
+      <span class="row-line"><span class="row-addr">${esc(a.address)}</span><span class="row-due${d&&d.urgent?' urgent':''}">${d?short(d.due):'<span class="muted">—</span>'}</span></span>
+      <span class="row-line row-sub"><span>${statusLine(a,ev)}</span>${d?`<span class="track${d.urgent?' urgent':''}" title="${d.unit==='day'?'Day':'Business day'} ${d.done} of ${d.total}"><i style="width:${Math.round(d.done/d.total*100)}%"></i></span>`:''}</span>
+    </button>`; }).join('') : `<p class="empty">${ui.query ? `No application here matches “${esc(ui.query)}”.` : 'No applications in this group.'}</p>`;
+  view.innerHTML = `
+    <div class="title-row"><div><h1>Applications</h1><p class="finding">${finding}</p></div></div>
+    <div class="split${ui.showDetail?' show-detail':''}">
+      <section class="list" aria-label="Applications, soonest deadline first">
+        <div class="tabs" role="tablist">${tab('open','Open')}${tab('waiting','Waiting')}${tab('decided','Decided')}</div>
+        ${list}
+      </section>
+      <section class="detail" aria-live="polite">${ui.selected ? detail(APPS.find(a=>a.id===ui.selected)) : '<p class="empty" style="margin:0">Choose an application to see its check.</p>'}</section>
+    </div>`;
+}
+function detail(a){
+  const ev = evaluate(a), d = deadline(a), act = nextAction(a, ev);
+  const hasLetter = (act && (act.kind==='notice'||act.kind==='comments')) || a.stage==='waiting';
+  if(!ui.dtab) ui.dtab = a.stage==='intake' ? 'docs' : 'check';
+  if(ui.dtab==='letter' && !hasLetter) ui.dtab = 'check';
+  const letterKind = a.stage==='waiting' ? a.sentKind : act && act.kind;
+  if(hasLetter && !ui.letters[a.id]) ui.letters[a.id] = letterFor(a, ev, letterKind);
+  let verdict;
+  if(a.stage==='approved'){ const day = daysBetween(D(a.completeOn), D(a.decidedOn));
+    verdict = `<b>Approved ${short(D(a.decidedOn))}</b>, on day ${day} of 60. A ministerial permit under § 17.90.050A.`; }
+  else if(a.stage==='waiting'){ const day = daysBetween(D(a.completeOn||a.submitted), D(a.sentOn));
+    verdict = a.sentKind==='notice' ? `<b>Incomplete notice sent ${short(D(a.sentOn))}.</b> The 60 days start when the completed application comes back.`
+      : `<b>Comments returned ${short(D(a.sentOn))}</b>, on day ${day} of 60, inside the limit of Gov. Code § 66317(b). Waiting for corrected plans.`; }
+  else if(a.stage==='intake') verdict = ev.missing.length
+      ? `<b>${plural(ev.missing.length,'document')} to fix before this is complete:</b> ${ev.missing.map(m=>m.doc.label.toLowerCase().replace('jadu','JADU')+(m.status==='stale'?' is out of date':' is missing')).join('; ')}.` + (ev.fails.length?` The design check also found ${plural(ev.fails.length,'standard')} not met.`:'')
+      : `<b>All ${ev.docs.length} documents are in.</b> Accepting it starts the 60-day decision period.`;
+  else verdict = ev.fails.length
+      ? `<b>${plural(ev.fails.length,'standard')} not met:</b> ${ev.fails.map(c=>`${c.rule.label.toLowerCase()} is ${c.found} where the code requires ${c.required}`).join('; ')}.`
+      : `<b>Meets all ${ev.measured.length} measured standards.</b>` + (ev.staff.length ? ` ${plural(ev.staff.length,'item')} ${ev.staff.length===1?'needs':'need'} a planner's eye before approval.` : ' Ready for a ministerial permit under § 17.90.050A.');
+  const dtab = (id,label,count) => `<button class="tab" role="tab" type="button" aria-selected="${ui.dtab===id}" data-dtab="${id}">${label}${count!=null?`<span class="n">${count}</span>`:''}</button>`;
+  let body;
+  if(ui.dtab==='check') body = `<div class="d-body"><div class="d-left">${lotDiagram(a)}${facts(a)}</div><div>${checksTable(ev,(a.stage==='review'||a.stage==='intake')?'staff':'read')}</div></div>`;
+  else if(ui.dtab==='docs') body = `<table class="stack"><thead><tr><th>Document</th><th class="num">Result</th></tr></thead><tbody>${ev.docs.map(x=>`<tr><td class="name">${x.doc.label}<span class="cite">${x.doc.cite}${x.note?' · '+x.note:''}</span></td><td class="res">${x.status==='ok'?'<span class="muted">Received</span>':x.status==='stale'?'<span class="pill pill-neg">Out of date</span>':'<span class="pill pill-neg">Missing</span>'}</td></tr>`).join('')}</tbody></table>`;
+  else { const sent = a.stage==='waiting';
+    body = `<label class="muted" for="letter" style="display:block;margin-bottom:8px">${sent?'Sent to':'To'} ${esc(a.applicant)}. ${sent?'':'Drafted from the check. Edit anything before it goes out.'}</label>
+      <textarea class="letter" id="letter" ${sent?'readonly':''}>${esc(ui.letters[a.id])}</textarea>
+      ${sent?'':`<div class="letter-foot"><span>Every item cites the section it comes from.</span><button class="btn btn-primary" type="button" data-act="send">Send to applicant</button></div>`}`; }
+  let actions = '';
+  if(act && !(ui.dtab==='letter')){
+    actions = `<div class="d-actions"><button class="btn btn-primary" type="button" data-act="${act.kind}" ${act.blocked?'disabled aria-describedby="why"':''}>${act.label}</button>${act.blocked?`<span class="why" id="why">${act.blocked}</span>`:''}</div>`;
+  }
+  return `
+    <button class="btn back" type="button" data-back>← All applications</button>
+    <div class="d-head">
+      <div><span class="mono muted">${a.id}</span><h2>${esc(a.address)}</h2>
+        <p class="meta">${KIND[a.kind]} · ${BEDS(a.bedrooms)} · ${n(a.area)} sq ft · ${esc(a.applicant)}</p></div>
+      ${actions}
+    </div>
+    ${d ? `<div class="clock">
+      <div class="clock-line"><span>${d.label} ${short(d.due)}</span><span class="clock-big${d.urgent?' urgent':''}">${d.left}<small>${d.unit}${d.left===1?'':'s'} left</small></span></div>
+      <span class="track${d.urgent?' urgent':''}" role="img" aria-label="${d.unit==='day'?'Day':'Business day'} ${d.done} of ${d.total}"><i style="width:${Math.round(d.done/d.total*100)}%"></i></span>
+      <div class="clock-ends"><span>${d.from} · ${d.unit==='day'?'day':'business day'} ${d.done} of ${d.total}</span><span>${d.after}</span></div>
+    </div>` : ''}
+    <p class="verdict">${verdict}</p>
+    <div class="d-tabs" role="tablist">${dtab('check','Code check',ev.fails.length||null)}${dtab('docs','Documents',ev.missing.length||null)}${hasLetter?dtab('letter','Letter'):''}</div>
+    ${body}`;
+}
+
+/* ---------- pre-check ---------- */
+function preEval(){ return evaluate({...pre, submitted:key(TODAY), docs:{}}); }
+function preSummary(ev){
+  const meets = ev.checks.filter(c=>c.status==='pass').length, measured = ev.checks.filter(c=>c.status!=='staff').length, f = ev.fails.length;
+  if(LANG==='es') return f ? `Este diseño cumple ${meets} de ${measured} normas medidas. ${f} por corregir antes de solicitar.` : `Este diseño cumple las ${measured} normas medidas. Un planificador revisa el resto.`;
+  return f ? `This design meets ${meets} of ${measured} measured standards. ${f} to fix before applying.` : `This design meets all ${measured} measured standards. A planner reviews the rest.`;
+}
+function renderPrecheck(){
+  LANG = ui.lang;
+  try {
+    const f = (id,label,type,extra='') => `<div class="field${extra.includes('wide')?' wide':''}" data-for="${id}"><label for="p-${id}">${t(label)}</label><input id="p-${id}" data-pre="${id}" type="${type}" ${type==='number'?'min="0" step="any" inputmode="decimal"':''} value="${esc(pre[id])}"></div>`;
+    const kinds = LANG==='es' ? KIND_ES : KIND;
+    view.innerHTML = `<div lang="${LANG}">
+    <div class="title-row"><div><h1>${t('Pre-check')}</h1><p class="finding" id="pre-sum"></p></div>
+      <div class="seg" role="group" aria-label="Language"><button type="button" data-lang="en" lang="en" aria-pressed="${LANG==='en'}">English</button><button type="button" data-lang="es" lang="es" aria-pressed="${LANG==='es'}">Español</button></div></div>
+    <div class="pre">
+      <form class="card" id="pre-form" autocomplete="off">
+        <h2>${t('Your ADU')}</h2>
+        <div class="fields">
+          ${f('address','Property address','text','wide')}
+          <div class="field wide"><label for="p-kind">${t('Type of unit')}</label><select id="p-kind" data-pre="kind">${Object.entries(kinds).map(([k,v])=>`<option value="${k}" ${pre.kind===k?'selected':''}>${v}</option>`).join('')}</select></div>
+          <div class="field"><label for="p-bedrooms">${t('Bedrooms')}</label><select id="p-bedrooms" data-pre="bedrooms">${[[0,'Studio'],[1,'1'],[2,'2 or more']].map(([v,l])=>`<option value="${v}" ${pre.bedrooms===v?'selected':''}>${t(l)}</option>`).join('')}</select></div>
+          ${f('area','Floor area, sq ft','number')}
+          ${f('height','Height, ft','number')}
+          ${f('primaryArea','Main house, sq ft','number')}
+          ${f('side','Side setback, ft','number')}
+          ${f('rear','Rear setback, ft','number')}
+          ${f('separation','Distance to the house, ft','number')}
+          ${f('parking','Parking spaces for the unit','number')}
+          <div class="check" data-for="transitStop"><input id="p-transit" data-pre="transitStop" type="checkbox" ${pre.transitStop?'checked':''}><label for="p-transit">${t('The lot is within half a mile walking distance of a bus stop')}</label></div>
+        </div>
+        <div class="form-foot"><span>${t('Free to try. Nothing is filed until you submit.')}</span><button class="btn btn-primary" type="submit">${t('Submit application')}</button></div>
+      </form>
+      <div class="pre-out" id="pre-out"></div>
+    </div></div>`;
+  } finally { LANG = 'en'; }
+  drawPre();
+}
+function drawPre(){
+  const hide = {height: pre.kind==='conversion'||pre.kind==='jadu', side:pre.kind==='jadu', rear:pre.kind==='jadu', separation:pre.kind!=='detached', parking:pre.kind==='jadu', transitStop:pre.kind==='jadu'};
+  document.querySelectorAll('[data-for]').forEach(el=>{ el.hidden = !!hide[el.dataset.for]; el.style.display = hide[el.dataset.for] ? 'none' : ''; });
+  LANG = ui.lang;
+  try {
+    const ev = preEval();
+    document.getElementById('pre-sum').textContent = preSummary(ev);
+    document.getElementById('pre-out').innerHTML = `<div class="d-left">${lotDiagram(pre)}${facts(pre)}</div><div>${checksTable(ev,'read')}</div>`;
+  } finally { LANG = 'en'; }
+}
+
+/* ---------- rules ---------- */
+function renderRules(){
+  const table = rows => `<table><thead><tr><th>Standard</th><th>What the code says</th><th>Source</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.label}</td><td>${r.text}</td><td>${r.cite}</td></tr>`).join('')}</tbody></table>`;
+  const adu = RULES.filter(r=>r.group==='adu'), jadu = RULES.filter(r=>r.group==='jadu'), total = adu.length+jadu.length+DOCS.length+STATE_RULES.length;
+  view.innerHTML = `
+    <div class="title-row"><div><h1>Rules</h1><p class="finding">${total} rules the check runs on. Every finding and every letter cites its section.</p></div><span class="stamp">Ord. 574, adopted 2025</span></div>
+    <div class="rules">
+      <div>
+        <h2>Accessory dwelling units</h2>${table(adu)}
+        <h2>Junior ADUs</h2>${table(jadu)}
+        <h2>Application package</h2>${table(DOCS)}
+        <h2>Deadlines and decisions</h2>${table(STATE_RULES)}
+      </div>
+      <aside class="card src">
+        <h2>Sources</h2>
+        <p>The rules are the city's own. When the Council amends the chapter, the rule changes here and the next check uses it.</p>
+        <a href="https://ecode360.com/47084735" target="_blank" rel="noopener">Greenfield Municipal Code, Chapter 17.90<span>Accessory dwelling units</span></a>
+        <a href="https://www.hcd.ca.gov/sites/default/files/docs/policy-and-research/ADU-Handbook-Update.pdf" target="_blank" rel="noopener">ADU Handbook, March 2026<span>California Department of Housing and Community Development</span></a>
+      </aside>
+    </div>`;
+}
+
+/* ---------- routing and events ---------- */
+function render(){
+  const route = (location.hash.replace('#/','') || 'applications');
+  document.querySelectorAll('[data-nav]').forEach(l=> l.dataset.nav===route ? l.setAttribute('aria-current','page') : l.removeAttribute('aria-current'));
+  document.body.classList.remove('nav-open'); document.getElementById('menu').setAttribute('aria-expanded','false');
+  if(route==='precheck') renderPrecheck(); else if(route==='rules') renderRules(); else renderApplications();
+  if(route!=='applications'){ const open = APPS.filter(a=>a.stage==='intake'||a.stage==='review').length; document.getElementById('nav-count').textContent = open || ''; }
+}
+window.addEventListener('hashchange', ()=>{ window.scrollTo(0,0); render(); });
+document.getElementById('today').textContent = long(TODAY);
+document.getElementById('menu').addEventListener('click', e=>{ const open = document.body.classList.toggle('nav-open'); e.currentTarget.setAttribute('aria-expanded', open); });
+document.getElementById('reset').addEventListener('click', ()=>{ APPS = JSON.parse(JSON.stringify(SEED)); Object.assign(ui,{tab:'open',selected:null,dtab:null,query:'',letters:{},showDetail:false,lang:'en'}); document.querySelectorAll('[data-search]').forEach(i=>i.value=''); location.hash = '#/applications'; render(); });
+document.querySelectorAll('[data-search]').forEach(inp=> inp.addEventListener('input', e=>{
+  ui.query = e.target.value.trim(); document.querySelectorAll('[data-search]').forEach(i=>{ if(i!==e.target) i.value = e.target.value; });
+  if((location.hash||'#/applications')!=='#/applications') location.hash = '#/applications'; else renderApplications();
+}));
+view.addEventListener('click', e=>{
+  const lg = e.target.closest('[data-lang]'); if(lg){ ui.lang = lg.dataset.lang; renderPrecheck(); const b = view.querySelector(`[data-lang="${ui.lang}"]`); if(b) b.focus(); return; }
+  const t = e.target.closest('[data-tab],[data-app],[data-dtab],[data-act],[data-confirm],[data-back]'); if(!t) return;
+  const a = APPS.find(x=>x.id===ui.selected);
+  if(t.dataset.tab){ ui.tab = t.dataset.tab; ui.selected = null; ui.dtab = null; ui.showDetail = false; }
+  else if(t.dataset.app){ ui.selected = t.dataset.app; ui.dtab = null; ui.showDetail = true; if(window.innerWidth<=1000) window.scrollTo(0,0); }
+  else if(t.dataset.dtab){ ui.dtab = t.dataset.dtab; }
+  else if(t.dataset.back!=null){ ui.showDetail = false; }
+  else if(t.dataset.confirm){ a.confirmed = {...(a.confirmed||{}), [t.dataset.confirm]:true}; }
+  else if(t.dataset.act){ const act = t.dataset.act;
+    if(act==='notice'||act==='comments'){ ui.dtab = 'letter'; }
+    else if(act==='send'){ const ev = evaluate(a); ui.letters[a.id] = document.getElementById('letter').value; a.sentKind = a.stage==='intake' ? 'notice' : 'comments'; a.sentOn = key(TODAY); a.stage = 'waiting'; ui.tab = 'waiting'; }
+    else if(act==='accept'){ a.completeOn = key(TODAY); a.stage = 'review'; ui.dtab = 'check'; }
+    else if(act==='approve'){ a.decidedOn = key(TODAY); a.stage = 'approved'; ui.tab = 'decided'; }
+  }
+  renderApplications();
+});
+view.addEventListener('input', e=>{
+  const k = e.target.dataset.pre; if(!k) return;
+  if(e.target.type==='checkbox') pre[k] = e.target.checked;
+  else if(e.target.type==='number'||k==='bedrooms') pre[k] = Number(e.target.value)||0;
+  else pre[k] = e.target.value;
+  if(k==='address') pre.street = pre.address.replace(/^\s*\d+\s*/,'') || 'Street';
+  drawPre();
+});
+view.addEventListener('submit', e=>{
+  if(e.target.id!=='pre-form') return; e.preventDefault();
+  const num = Math.max(...APPS.map(a=>Number(a.id.slice(-3))))+1, id = `ADU-2026-${String(num).padStart(3,'0')}`;
+  const app = {...pre, id, entrance:true, utilities:true, withinWalls:true, kitchen:true, ownerOcc:true, submitted:key(TODAY), completeOn:null, stage:'intake',
+    docs:{form:true,fee:true,plans:true,title:'2026-10-20',utility:true,deed:true}};
+  APPS.push(app); Object.assign(ui,{tab:'open',selected:id,dtab:'check',query:'',showDetail:true});
+  location.hash = '#/applications';
+});
+render();
+</script>
+</body>
+</html>
